@@ -1,0 +1,13 @@
+* CHANGES
+* MANIFEST
+* Rakefile
+* README
+* win32-file.gemspec
+* lib/win32/file.rb
+* test/sometestfile.txt
+* test/test_win32_file_attributes.rb
+* test/test_win32_file_constants.rb
+* test/test_win32_file_encryption.rb
+* test/test_win32_file_path.rb
+* test/test_win32_file_security.rb
+* test/test_win32_file_stat.rb
