@@ -19,7 +19,7 @@ class File
   extend Windows::Handle
    
   # The version of the win32-file library
-  WIN32_FILE_VERSION  = '0.6.2'
+  WIN32_FILE_VERSION = '0.6.3'
 
   # Abbreviated attribute constants for convenience
 
@@ -98,6 +98,7 @@ class File
     alias chardev_orig chardev?
     alias directory_orig? directory?
     alias dirname_orig dirname
+    alias join_orig join
     alias lstat_orig lstat
     alias readlink_orig readlink
     alias size_orig size
@@ -532,6 +533,21 @@ class File
       end
          
       file
+    end
+
+    # Join path string components together into a single string.
+    #
+    # This method was reimplemented so that it automatically converts
+    # forward slashes to backslashes. It is otherwise identical to
+    # the core File.join method.
+    #
+    # Examples:
+    #
+    #   File.join("C:", "foo", "bar") # => C:\foo\bar
+    #   File.join("foo", "bar")       # => foo\bar
+    #
+    def join(*args)
+      return join_orig(*args).tr("/", "\\")
     end
 
     # Returns +path+ in long format. For example, if 'SOMEFI~1.TXT'
@@ -1265,3 +1281,5 @@ class File
     name_buf.strip
   end
 end
+
+puts File.join("C:", "foo", "bar")
