@@ -10,10 +10,18 @@ task :clean do
   }
 end
 
-desc 'Install the win32-file gem'
-task :install => [:clean, :build] do
-  file = Dir['win32-file*.gem'].first
-  sh "gem install #{file}"
+namespace 'gem' do
+  desc 'Create the win32-file gem'
+  task :create => [:clean] do
+    spec = eval(IO.read('win32-file.gemspec'))
+    Gem::Builder.new(spec).build  
+  end
+
+  desc 'Install the win32-file gem'
+  task :install => [:create] do
+    file = Dir['win32-file*.gem'].first
+    sh "gem install #{file}"
+  end
 end
 
 namespace 'test' do
