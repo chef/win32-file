@@ -19,7 +19,7 @@ class File
   extend Windows::Handle
    
   # The version of the win32-file library
-  WIN32_FILE_VERSION = '0.6.3'
+  WIN32_FILE_VERSION = '0.6.4'
 
   # Abbreviated attribute constants for convenience
 
@@ -495,7 +495,7 @@ class File
     def directory?(file)
       file = multi_to_wide(file)
       attributes = GetFileAttributesW(file)
-      (attributes != -1) && (attributes & FILE_ATTRIBUTE_DIRECTORY > 0)
+      (attributes != INVALID_FILE_ATTRIBUTES) && (attributes & FILE_ATTRIBUTE_DIRECTORY > 0)
     end
 
     # Returns all components of the filename given in +filename+ except the

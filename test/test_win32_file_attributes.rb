@@ -26,7 +26,7 @@ class TC_Win32_File_Attributes < Test::Unit::TestCase
    end
 
    def test_version
-      assert_equal('0.6.2', File::WIN32_FILE_VERSION)
+      assert_equal('0.6.4', File::WIN32_FILE_VERSION)
    end
    
    def test_is_directory
