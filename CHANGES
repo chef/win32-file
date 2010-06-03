@@ -2,6 +2,7 @@
 * Redefined the File.join method so that it converts all forward slashes
   to back slashes.
 * Refactored the Rakefile and path tests a bit.
+* Bumped the minimum test-unit version to 2.0.7.
 
 == 0.6.3 - 24-Aug-2009
 * Refactored the File.directory? method so that it checks against the
