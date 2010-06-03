@@ -1,5 +1,7 @@
-== 0.6.3 - ???
-* Redefined the File.join method.
+== 0.6.3 - 3-Jun-2010
+* Redefined the File.join method so that it converts all forward slashes
+  to back slashes.
+* Refactored the Rakefile and path tests a bit.
 
 == 0.6.2 - 19-Dec-2009
 * Changed the license to Artistic 2.0.
