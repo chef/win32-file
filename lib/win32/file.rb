@@ -1281,5 +1281,3 @@ class File
     name_buf.strip
   end
 end
-
-puts File.join("C:", "foo", "bar")
