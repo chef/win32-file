@@ -1,3 +1,6 @@
+== 0.6.5 - 19-Jul-2010
+* Removed debug print statement (oops!).
+
 == 0.6.4 - 3-Jun-2010
 * Redefined the File.join method so that it converts all forward slashes
   to back slashes.
