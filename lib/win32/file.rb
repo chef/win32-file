@@ -19,7 +19,7 @@ class File
   extend Windows::Handle
    
   # The version of the win32-file library
-  WIN32_FILE_VERSION = '0.6.4'
+  WIN32_FILE_VERSION = '0.6.5'
 
   # Abbreviated attribute constants for convenience
 
