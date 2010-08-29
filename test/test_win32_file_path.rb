@@ -133,9 +133,8 @@ class TC_Win32_File_Path < Test::Unit::TestCase
   test "dirname handles various edge cases as expected" do
     assert_equal(".", File.dirname(""))
     assert_equal(".", File.dirname("."))
-    assert_equal(".", File.dirname("."))
+    assert_equal(".", File.dirname(".."))
     assert_equal(".", File.dirname("./"))
-    assert_raises(TypeError){ File.dirname(nil) }
   end
       
   test "dirname method does not modify its argument" do
@@ -143,7 +142,20 @@ class TC_Win32_File_Path < Test::Unit::TestCase
     assert_nothing_raised{ File.dirname(path) }
     assert_equal("C:\\foo\\bar", path)
   end
-   
+
+  test "dirname method ignores trailing slashes" do
+    assert_equal("C:\\foo\\bar", File.dirname("C:/foo/bar/baz/"))
+    assert_equal("C:\\foo\\bar", File.dirname("C:/foo/bar/baz//"))
+    assert_equal("C:\\foo\\bar", File.dirname("C:/foo/bar/baz///"))
+    assert_equal("C:\\foo\\bar", File.dirname("C:\\foo\\bar\\baz\\"))
+    assert_equal("\\\\foo\\bar", File.dirname("\\\\foo\\bar\\baz\\"))
+  end
+
+  test "argument to dirname must be a string" do
+    assert_raises(TypeError){ File.dirname(nil) }
+    assert_raises(TypeError){ File.dirname(['foo', 'bar']) }
+  end
+
   test "split method basic functionality" do
     assert_respond_to(File, :split)
     assert_nothing_raised{ File.split("C:\\foo\\bar") }

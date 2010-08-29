@@ -514,6 +514,11 @@ class File
     #
     def dirname(file)
       raise TypeError unless file.is_a?(String)
+
+      # Short circuit for empty paths
+      return '.' if file.empty?
+
+      # Temporarily convert to wide-byte
       file = multi_to_wide(file)
 
       # Convert slashes to backslashes for the Windows API functions
@@ -521,10 +526,16 @@ class File
          
       # Return a root path as-is.
       return wide_to_multi(file) if PathIsRootW(file)
-       
-      # Remove trailing file name and backslash, if present
+
+      # Remove trailing slashes if present
+      while result = PathRemoveBackslashW(file)
+        break unless result.empty?
+      end
+
+      # Remove trailing file name if present
       PathRemoveFileSpecW(file)
 
+      # Return to multi-byte
       file = wide_to_multi(file)
        
       # Empty paths, short relative paths
