@@ -1,3 +1,8 @@
+== 0.6.6 - 3-Sep-2010
+* Fixed a bug in the custom File.dirname where trailing slashes were
+  affecting the result. Trailing slashes are now ignored.
+* Added a global test task and a default rake task. Both run all tests.
+
 == 0.6.5 - 19-Jul-2010
 * Removed debug print statement (oops!).
 

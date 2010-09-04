@@ -66,3 +66,6 @@ namespace 'test' do
     t.test_files = FileList['test/test_win32_file_stat.rb']
   end
 end
+
+task :test => ['test:all']
+task :default => ['test:all']
