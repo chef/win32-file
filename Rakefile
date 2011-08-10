@@ -1,14 +1,10 @@
 require 'rake'
 require 'rake/testtask'
+require 'rake/clean'
 require 'rbconfig'
 include Config
 
-desc 'Clean any text files that may have been left over from tests'
-task :clean do 
-  Dir['test/*'].each{ |file|
-    rm file if File.extname(file) == '.txt'
-  }
-end
+CLEAN.include("**/*.txt", "**/*.gem", "**/*.rbc")
 
 namespace 'gem' do
   desc 'Create the win32-file gem'
