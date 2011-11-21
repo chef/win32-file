@@ -89,6 +89,16 @@ class TC_Win32_File_Path < Test::Unit::TestCase
     assert_nothing_raised{ File.basename(path) }
     assert_equal("C:\\foo\\bar", path)    
   end
+
+  test "basename removes all trailing slashes" do
+    assert_equal("foo.txt", File.basename("C:/foo.txt/"))
+    assert_equal("foo.txt", File.basename("C:/foo.txt//"))
+    assert_equal("foo.txt", File.basename("C:/foo.txt///"))
+    assert_equal("foo.txt", File.basename("C:\\foo.txt\\"))
+    assert_equal("foo.txt", File.basename("C:\\foo.txt\\\\"))
+    assert_equal("foo.txt", File.basename("C:\\foo.txt\\\\\\"))
+    assert_equal("foo.txt", File.basename("foo.txt\\\\\\"))
+  end
    
   test "dirname basic functionality" do
     assert_respond_to(File, :dirname)

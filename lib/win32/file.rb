@@ -483,7 +483,7 @@ class File
       end
 
       file = wide_to_multi(file)
-      file.chop! while file[-1].chr == "\\" # Trim trailing slashes
+      file.sub!(/\\+\z/, '') # Trim trailing slashes
 
       file
     end
