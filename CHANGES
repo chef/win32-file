@@ -1,4 +1,6 @@
 == 0.6.7 - ???
+* Fixed a bug in File.basename where an error could be caused by trailing
+  slashes. Thanks go to paz for the spot and patch.
 * Updated the clean task in the Rakefile.
 
 == 0.6.6 - 3-Sep-2010

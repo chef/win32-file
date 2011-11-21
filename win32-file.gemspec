@@ -2,7 +2,7 @@ require 'rubygems'
 
 Gem::Specification.new do |spec|
   spec.name       = 'win32-file'
-  spec.version    = '0.6.6'
+  spec.version    = '0.6.7'
   spec.authors    = ['Daniel J. Berger', 'Park Heesob']
   spec.license    = 'Artistic 2.0'
   spec.email      = 'djberg96@gmail.com'
@@ -10,7 +10,6 @@ Gem::Specification.new do |spec|
   spec.platform   = Gem::Platform::RUBY
   spec.summary    = 'Extra or redefined methods for the File class on Windows.'
   spec.test_files = Dir['test/test*']
-  spec.has_rdoc   = true
   spec.files      = Dir['**/*'].reject{ |f| f.include?('git') }
 
   spec.rubyforge_project = 'win32utils'
@@ -20,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency('win32-file-stat', '>= 1.3.2')
   spec.add_dependency('windows-pr', '>= 1.0.8')
 
-  spec.add_development_dependency('test-unit', '>= 2.0.7')
+  spec.add_development_dependency('test-unit')
 
   spec.description = <<-EOF
     The win32-file library adds several methods to the core File class which
