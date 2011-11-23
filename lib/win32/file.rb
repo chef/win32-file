@@ -176,8 +176,9 @@ class File
       all_ace = 0.chr * ALLOW_ACE_LENGTH
       all_ace_ptr = memset(all_ace, 0, 0) # address of all_ace
 
+
       # all_ace_ptr->Header.AceType = ACCESS_ALLOWED_ACE_TYPE
-      all_ace[0] = 0
+      all_ace[0] = 0.chr
 
       perms.each{ |account, mask|
         next if mask.nil?
@@ -225,7 +226,10 @@ class File
         end
 
         # all_ace_ptr->Header.AceFlags = INHERIT_ONLY_ACE|OBJECT_INHERIT_ACE
-        all_ace[1] = INHERIT_ONLY_ACE | OBJECT_INHERIT_ACE
+        all_ace[1] = (INHERIT_ONLY_ACE | OBJECT_INHERIT_ACE).chr
+
+        # WHY DO I NEED THIS RUBY CORE TEAM? WHY?!?!?!?!?!?
+        all_ace.force_encoding('ASCII-8BIT') if RUBY_VERSION.to_f >= 1.9
 
         2.times{
           if account_rights != 0
@@ -245,10 +249,10 @@ class File
             end
 
             # all_ace_ptr->Header.AceFlags = CONTAINER_INHERIT_ACE
-            all_ace[1] = CONTAINER_INHERIT_ACE
+            all_ace[1] = CONTAINER_INHERIT_ACE.chr
           else
             # all_ace_ptr->Header.AceFlags = 0
-            all_ace[1] = 0
+            all_ace[1] = 0.chr
           end
 
           account_rights = REST_RIGHTS_MASK & mask
