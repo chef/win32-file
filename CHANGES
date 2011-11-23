@@ -1,4 +1,5 @@
-== 0.6.7 - ???
+== 0.6.7 - 23-Nov-2011
+* Fixed an encoding problem with File.set_permissions for Ruby 1.9.x.
 * Fixed a bug in File.basename where an error could be caused by trailing
   slashes. Thanks go to paz for the spot and patch.
 * Updated the clean task in the Rakefile.
