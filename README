@@ -1,6 +1,6 @@
 == Description
-  Additional methods for the File class on MS Windows. In addition, several
-  existing methods have been redefined to make them work properly on MS Windows.
+  Additional methods for the File class on MS Windows. Plus, several existing
+  methods have been redefined to make them work properly on MS Windows.
 
 == Prerequisites
   * windows-pr
@@ -43,7 +43,7 @@
   * File.system?
   * File.temporary?
 
-== Instance methods added - see documentation for details
+== Instance Methods Added
   * File#archive=
   * File#compressed=
   * File#hidden=
@@ -55,14 +55,20 @@
   * File#system=
   * File#temporary=
 
-== Class methods redefined and the reason for redefining them
-  * File.basename  # UNC path issues
-  * File.blksize   # Wasn't implemented
-  * File.blockdev? # Wasn't implemented
-  * File.chardev?  # Wasn't implemented
-  * File.dirname   # UNC path issues
-  * File.size      # 2GB limitation
-  * File.split     # UNC path issues
+== Singleton Methods Redefined
+  * File.basename   # UNC path issues
+  * File.blksize    # Not implemented in MRI
+  * File.blockdev?  # Not implemented in MRI
+  * File.chardev?   # Not implemented in MRI
+  * File.directory? # Wide character string handling
+  * File.dirname    # UNC path issues
+  * File.lstat      # Not implemented in MRI
+  * File.readlink   # Not implemented in MRI
+  * File.size       # 2GB limitation
+  * File.split      # UNC path issues
+  * File.stat       # Uses object returned by win32-file-stat
+  * File.symlink    # Not implemented in MRI
+  * File.symlink?   # Not implemented in MRI
 
 == Known issues or bugs
   None that I'm aware of.
