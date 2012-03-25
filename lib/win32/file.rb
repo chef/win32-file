@@ -17,9 +17,9 @@ class File
   extend Windows::MSVCRT::Buffer
   extend Windows::Limits
   extend Windows::Handle
-   
+
   # The version of the win32-file library
-  WIN32_FILE_VERSION = '0.6.7'
+  WIN32_FILE_VERSION = '0.6.8'
 
   # Abbreviated attribute constants for convenience
 
@@ -58,7 +58,7 @@ class File
   # Synonym for File::INDEXED.
   CONTENT_INDEXED = INDEXED
 
-  # Custom Security rights  
+  # Custom Security rights
 
   # Full security rights - read, write, append, execute, and delete.
   FULL = STANDARD_RIGHTS_ALL | FILE_READ_DATA | FILE_WRITE_DATA |
@@ -78,13 +78,13 @@ class File
 
   SECURITY_RIGHTS = {
     'FULL'    => FULL,
-    'DELETE'  => DELETE, 
-    'READ'    => READ, 
+    'DELETE'  => DELETE,
+    'READ'    => READ,
     'CHANGE'  => CHANGE,
     'ADD'     => ADD
   }
 
-  # :startdoc: 
+  # :startdoc:
 
   ### Class Methods
 
@@ -110,7 +110,7 @@ class File
     # :startdoc:
 
     ## Security
-      
+
     # Sets the file permissions for the given file name.  The 'permissions'
     # argument is a hash with an account name as the key, and the various
     # permission constants as possible values. The possible constant values
@@ -182,7 +182,7 @@ class File
 
       perms.each{ |account, mask|
         next if mask.nil?
-         
+
         cch_domain = [80].pack('L')
         cb_sid     = [1024].pack('L')
         domain_buf = 0.chr * 80
@@ -208,7 +208,7 @@ class File
         end
 
         size = [0,0,0,0,0].pack('CCSLL').length # sizeof(ACCESS_ALLOWED_ACE)
-            
+
         val = CopySid(
           ALLOW_ACE_LENGTH - size,
           all_ace_ptr + 8,  # address of all_ace_ptr->SidStart
@@ -269,7 +269,7 @@ class File
 
       self
     end
-      
+
     # Returns an array of human-readable strings that correspond to the
     # permission flags.
     #
@@ -300,7 +300,6 @@ class File
     # the +File.securities+ method.
     #
     def get_permissions(file, host=nil)
-      current_length = 0
       length_needed  = [0].pack('L')
       sec_buf = ''
 
@@ -316,7 +315,7 @@ class File
         if bool == 0 && GetLastError() != ERROR_INSUFFICIENT_BUFFER
           raise ArgumentError, get_last_error
         end
-            
+
         break if sec_buf.length >= length_needed.unpack('L').first
         sec_buf += ' ' * length_needed.unpack('L').first
       end
@@ -374,7 +373,7 @@ class File
           domain      = 0.chr * MAXPATH
           domain_size = [domain.size].pack('L')
           snu_ptr     = 0.chr * 4
-               
+
           val = LookupAccountSid(
             host,
             ace_ptr.unpack('L').first + 8, # address of ace_ptr->SidStart
@@ -384,34 +383,34 @@ class File
             domain_size,
             snu_ptr
           )
-               
+
           if val == 0
             raise ArgumentError, get_last_error
           end
-               
+
           name   = name[0..name_size.unpack('L').first].split(0.chr)[0]
           domain = domain[0..domain_size.unpack('L').first].split(0.chr)[0]
           mask   = ace_buf.unpack('LLL')[1]
-               
+
           unless domain.nil? || domain.empty?
             name = domain + '\\' + name
           end
-              
+
           perms_hash[name] = mask
         end
       }
       perms_hash
     end
-      
+
     ## Encryption
-      
+
     # Encrypts a file or directory. All data streams in a file are encrypted.
     # All new files created in an encrypted directory are encrypted.
     #
     # The caller must have the FILE_READ_DATA, FILE_WRITE_DATA,
     # FILE_READ_ATTRIBUTES, FILE_WRITE_ATTRIBUTES, and SYNCHRONIZE access
     # rights.
-    # 
+    #
     # Requires exclusive access to the file being encrypted, and will fail if
     # another process is using the file.  If the file is compressed,
     # EncryptFile will decompress the file before encrypting it.
@@ -422,17 +421,17 @@ class File
       end
       self
     end
-      
+
     # Decrypts an encrypted file or directory.
-    #  
+    #
     # The caller must have the FILE_READ_DATA, FILE_WRITE_DATA,
     # FILE_READ_ATTRIBUTES, FILE_WRITE_ATTRIBUTES, and SYNCHRONIZE access
     # rights.
-    # 
+    #
     # Requires exclusive access to the file being decrypted, and will fail if
     # another process is using the file. If the file is not encrypted an error
     # is NOT raised.
-    # 
+    #
     # Windows 2000 or later only.
     #
     def decrypt(file)
@@ -443,7 +442,7 @@ class File
     end
 
     ## Path methods
-    
+
     # Returns the last component of the filename given in +filename+.  If
     # +suffix+ is given and present at the end of +filename+, it is removed.
     # Any extension can be removed by giving an extension of ".*".
@@ -473,9 +472,9 @@ class File
 
       # Return a root path as-is.
       return wide_to_multi(file) if PathIsRootW(file)
-             
+
       PathStripPathW(file) # Gives us the basename
-       
+
       if suffix
         if suffix == '.*'
           PathRemoveExtensionW(file)
@@ -504,7 +503,7 @@ class File
 
     # Returns all components of the filename given in +filename+ except the
     # last one.
-    # 
+    #
     # This was reimplemented because the current version does not handle UNC
     # paths properly, i.e. it should not return anything less than the root.
     # In all other respects it is identical to the current implementation.
@@ -527,7 +526,7 @@ class File
 
       # Convert slashes to backslashes for the Windows API functions
       file.tr!(File::SEPARATOR, File::ALT_SEPARATOR)
-         
+
       # Return a root path as-is.
       return wide_to_multi(file) if PathIsRootW(file)
 
@@ -541,12 +540,12 @@ class File
 
       # Return to multi-byte
       file = wide_to_multi(file)
-       
+
       # Empty paths, short relative paths
       if file.nil? || (file && file.empty?)
         return '.'
       end
-         
+
       file
     end
 
@@ -633,10 +632,10 @@ class File
     # Splits the given string into a directory and a file component and
     # returns them in a two element array. This was reimplemented because
     # the current version does not handle UNC paths properly.
-    # 
+    #
     def split(file)
       array = []
-         
+
       if file.empty? || PathIsRootW(multi_to_wide(file))
         array.push(file, '')
       else
@@ -697,19 +696,19 @@ class File
     end
 
     ## Stat methods
-    
+
     # Returns a File::Stat object, as defined in the win32-file-stat package.
-    # 
+    #
     def stat(file)
       File::Stat.new(file)
     end
-      
+
     # Identical to File.stat on Windows.
-    # 
+    #
     def lstat(file)
       File::Stat.new(file)
     end
-      
+
     # Returns the file system's block size.
     #
     def blksize(file)
@@ -750,11 +749,11 @@ class File
 
   # Returns true if the file or directory is an archive file. Applications
   # use this attribute to mark files for backup or removal.
-  # 
+  #
   def self.archive?(file)
     File::Stat.new(file).archive?
   end
-   
+
   # Returns true if the file or directory is compressed. For a file, this
   # means that all of the data in the file is compressed. For a directory,
   # this means that compression is the default for newly created files and
@@ -775,11 +774,11 @@ class File
 
   # Returns true if the file or directory is hidden. It is not included
   # in an ordinary directory listing.
-  # 
+  #
   def self.hidden?(file)
     File::Stat.new(file).hidden?
   end
-   
+
   # Returns true if the file or directory is indexed by the content indexing
   # service.
   #
@@ -792,7 +791,7 @@ class File
   def self.normal?(file)
     File::Stat.new(file).normal?
   end
-   
+
   # Returns true if the data of the file is not immediately available. This
   # attribute indicates that the file data has been physically moved to
   # offline storage. This attribute is used by Remote Storage, the
@@ -846,10 +845,10 @@ class File
   def self.temporary?(file)
     File::Stat.new(file).temporary?
   end
-   
+
   # Returns an array of strings indicating the attributes for that file.  The
   # possible values are:
-  # 
+  #
   # archive
   # compressed
   # directory
@@ -866,7 +865,7 @@ class File
   #
   def self.attributes(file)
     attributes = GetFileAttributesW(multi_to_wide(file))
-      
+
     if attributes == INVALID_FILE_ATTRIBUTES
       raise ArgumentError, get_last_error
     end
@@ -886,85 +885,85 @@ class File
     arr << 'sparse' if attributes & FILE_ATTRIBUTE_SPARSE_FILE > 0
     arr << 'system' if attributes & FILE_ATTRIBUTE_SYSTEM > 0
     arr << 'temporary' if attributes & FILE_ATTRIBUTE_TEMPORARY > 0
-      
+
     arr
   end
-  
+
   # Sets the file attributes based on the given (numeric) +flags+.  This does
   # not remove existing attributes, it merely adds to them.
   #
   def self.set_attributes(file, flags)
     file = multi_to_wide(file)
     attributes = GetFileAttributesW(file)
-      
+
     if attributes == INVALID_FILE_ATTRIBUTES
       raise ArgumentError, get_last_error
     end
-      
+
     attributes |= flags
-     
+
     if SetFileAttributesW(file, attributes) == 0
       raise ArgumentError, get_last_error
     end
-      
+
      self
   end
-   
+
   # Removes the file attributes based on the given (numeric) +flags+.
   #
   def self.remove_attributes(file, flags)
     file = multi_to_wide(file)
     attributes = GetFileAttributesW(file)
-       
+
     if attributes == INVALID_FILE_ATTRIBUTES
       raise ArgumentError, get_last_error
     end
-      
+
     attributes &= ~flags
-      
+
     if SetFileAttributesW(file, attributes) == 0
       raise ArgumentError, get_last_error
     end
-      
+
     self
   end
-   
+
   # Instance methods
-   
+
   def stat
     File::Stat.new(self.path)
   end
-   
+
   # Sets whether or not the file is an archive file.
   #
   def archive=(bool)
     wide_path  = multi_to_wide(self.path)
     attributes = GetFileAttributesW(wide_path)
-   
+
     if attributes == INVALID_FILE_ATTRIBUTES
       raise ArgumentError, get_last_error
     end
-      
+
     if bool
       attributes |= FILE_ATTRIBUTE_ARCHIVE;
     else
       attributes &= ~FILE_ATTRIBUTE_ARCHIVE;
     end
-      
+
     if SetFileAttributesW(wide_path, attributes) == 0
       raise ArgumentError, get_last_error
     end
 
     self
   end
-   
+
   # Sets whether or not the file is a compressed file.
   #
-  def compressed=(bool)     
+  def compressed=(bool)
     in_buf = bool ? COMPRESSION_FORMAT_DEFAULT : COMPRESSION_FORMAT_NONE
     in_buf = [in_buf].pack('L')
     bytes  = [0].pack('L')
-      
+
     # We can't use get_osfhandle here because we need specific attributes
     handle = CreateFileW(
       multi_to_wide(self.path),
@@ -975,7 +974,7 @@ class File
       0,
       0
     )
-      
+
     if handle == INVALID_HANDLE_VALUE
       raise ArgumentError, get_last_error
     end
@@ -991,41 +990,41 @@ class File
         bytes,
         0
       )
-      
+
       unless bool
         raise ArgumentError, get_last_error
       end
     ensure
       CloseHandle(handle)
     end
-      
+
     self
   end
-   
+
   # Sets the hidden attribute to true or false.  Setting this attribute to
   # true means that the file is not included in an ordinary directory listing.
   #
-  def hidden=(bool)     
+  def hidden=(bool)
     wide_path  = multi_to_wide(self.path)
     attributes = GetFileAttributesW(wide_path)
-    
+
     if attributes == INVALID_FILE_ATTRIBUTES
       raise ArgumentError, get_last_error
     end
-      
+
     if bool
       attributes |= FILE_ATTRIBUTE_HIDDEN;
     else
       attributes &= ~FILE_ATTRIBUTE_HIDDEN;
     end
-      
+
     if SetFileAttributesW(wide_path, attributes) == 0
       raise ArgumentError, get_last_error
     end
 
     self
   end
-   
+
   # Sets the 'indexed' attribute to true or false.  Setting this to
   # false means that the file will not be indexed by the content indexing
   # service.
@@ -1033,26 +1032,26 @@ class File
   def indexed=(bool)
     wide_path  = multi_to_wide(self.path)
     attributes = GetFileAttributesW(wide_path)
-     
+
     if attributes == INVALID_FILE_ATTRIBUTES
       raise ArgumentError, get_last_error
     end
-      
+
     if bool
       attributes &= ~FILE_ATTRIBUTE_NOT_CONTENT_INDEXED;
     else
       attributes |= FILE_ATTRIBUTE_NOT_CONTENT_INDEXED;
     end
-      
+
     if SetFileAttributes(wide_path, attributes) == 0
       raise ArgumentError, get_last_error
     end
 
     self
   end
-   
+
    alias :content_indexed= :indexed=
-   
+
   # Sets the normal attribute. Note that only 'true' is a valid argument,
   # which has the effect of removing most other attributes.  Attempting to
   # pass any value except true will raise an ArgumentError.
@@ -1068,13 +1067,13 @@ class File
 
     self
   end
-   
+
   # Sets whether or not a file is online or not.  Setting this to false means
 	# that the data of the file is not immediately available. This attribute
 	# indicates that the file data has been physically moved to offline storage.
 	# This attribute is used by Remote Storage, the hierarchical storage
 	# management software.
-  # 
+  #
 	# Applications should not arbitrarily change this attribute.
   #
   def offline=(bool)
@@ -1084,56 +1083,56 @@ class File
     if attributes == INVALID_FILE_ATTRIBUTES
       raise ArgumentError, get_last_error
     end
-      
+
     if bool
       attributes |= FILE_ATTRIBUTE_OFFLINE;
     else
       attributes &= ~FILE_ATTRIBUTE_OFFLINE;
     end
-      
+
     if SetFileAttributesW(wide_path, attributes) == 0
       raise ArgumentError, get_last_error
     end
 
     self
   end
-   
+
   # Sets the readonly attribute.  If set to true the the file or directory is
   # readonly. Applications can read the file but cannot write to it or delete
   # it. In the case of a directory, applications cannot delete it.
-  # 
+  #
   def readonly=(bool)
     wide_path  = multi_to_wide(self.path)
     attributes = GetFileAttributesW(wide_path)
-      
+
     if attributes == INVALID_FILE_ATTRIBUTES
       raise ArgumentError, get_last_error
     end
-      
+
     if bool
       attributes |= FILE_ATTRIBUTE_READONLY;
     else
       attributes &= ~FILE_ATTRIBUTE_READONLY;
     end
-      
+
     if SetFileAttributesW(wide_path, attributes) == 0
       raise ArgumentError, get_last_error
     end
 
     self
   end
-   
+
   # Sets the file to a sparse (usually image) file.  Note that you cannot
   # remove the sparse property from a file.
   #
-  def sparse=(bool)     
+  def sparse=(bool)
     unless bool
       warn 'cannot remove sparse property from a file - operation ignored'
       return
     end
-      
+
     bytes = [0].pack('L')
-      
+
     handle = CreateFileW(
       multi_to_wide(self.path),
       FILE_READ_DATA | FILE_WRITE_DATA,
@@ -1143,11 +1142,11 @@ class File
       FSCTL_SET_SPARSE(),
       0
     )
-      
+
     if handle == INVALID_HANDLE_VALUE
       raise ArgumentError, get_last_error
     end
-      
+
     begin
       bool = DeviceIoControl(
         handle,
@@ -1159,49 +1158,49 @@ class File
         bytes,
         0
       )
-      
+
       unless bool == 0
         raise ArgumentError, get_last_error
       end
     ensure
       CloseHandle(handle)
     end
-      
+
     self
   end
-   
+
   # Set whether or not the file is a system file.  A system file is a file
 	# that is part of the operating system or is used exclusively by it.
   #
   def system=(bool)
     wide_path  = multi_to_wide(self.path)
     attributes = GetFileAttributesW(wide_path)
-      
+
     if attributes == INVALID_FILE_ATTRIBUTES
       raise ArgumentError, get_last_error
     end
-      
+
     if bool
       attributes |= FILE_ATTRIBUTE_SYSTEM;
     else
       attributes &= ~FILE_ATTRIBUTE_SYSTEM;
     end
-      
+
     if SetFileAttributesW(wide_path, attributes) == 0
       raise ArgumentError, get_last_error
     end
 
     self
   end
-   
+
   # Sets whether or not the file is being used for temporary storage.
-  # 
+  #
   # File systems avoid writing data back to mass storage if sufficient cache
   # memory is available, because often the application deletes the temporary
   # file shortly after the handle is closed. In that case, the system can
   # entirely avoid writing the data. Otherwise, the data will be written
   # after the handle is closed.
-  # 
+  #
   def temporary=(bool)
     wide_path  = multi_to_wide(self.path)
     attributes = GetFileAttributesW(wide_path)
@@ -1209,20 +1208,20 @@ class File
     if attributes == INVALID_FILE_ATTRIBUTES
       raise ArgumentError, get_last_error
     end
-      
+
     if bool
       attributes |= FILE_ATTRIBUTE_TEMPORARY;
     else
       attributes &= ~FILE_ATTRIBUTE_TEMPORARY;
     end
-      
+
     if SetFileAttributesW(wide_path, attributes) == 0
       raise ArgumentError, get_last_error
     end
 
     self
   end
-   
+
   # Singleton aliases, mostly for backwards compatibility
   class << self
     alias :read_only? :readonly?
@@ -1250,7 +1249,6 @@ class File
       raise ArgumentError, get_last_error
     end
 
-    sid     = 0.chr * 28
     sid_ptr = [0].pack('L')
 
     begin
@@ -1292,7 +1290,7 @@ class File
     ensure
       CloseHandle(handle)
     end
-      
+
     name_buf.strip
   end
 end
