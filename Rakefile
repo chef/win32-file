@@ -1,8 +1,6 @@
 require 'rake'
 require 'rake/testtask'
 require 'rake/clean'
-require 'rbconfig'
-include Config
 
 CLEAN.include("**/*.txt", "**/*.gem", "**/*.rbc")
 
