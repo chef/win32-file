@@ -2,12 +2,11 @@ require 'rubygems'
 
 Gem::Specification.new do |spec|
   spec.name       = 'win32-file'
-  spec.version    = '0.6.7'
+  spec.version    = '0.6.8'
   spec.authors    = ['Daniel J. Berger', 'Park Heesob']
   spec.license    = 'Artistic 2.0'
   spec.email      = 'djberg96@gmail.com'
-  spec.homepage   = 'http://www.rubyforge.org/projects/win32utils'
-  spec.platform   = Gem::Platform::RUBY
+  spec.homepage   = 'http://github.com/djberg96/win32-file'
   spec.summary    = 'Extra or redefined methods for the File class on Windows.'
   spec.test_files = Dir['test/test*']
   spec.files      = Dir['**/*'].reject{ |f| f.include?('git') }

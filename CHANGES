@@ -1,3 +1,8 @@
+== 0.6.8 - 6-Apr-2012
+* Fixed some unused variable warnings for 1.9.3.
+* Minor cleanup of the Rakefile.
+* Fixed an issue with a blockdev test.
+
 == 0.6.7 - 23-Nov-2011
 * Fixed an encoding problem with File.set_permissions for Ruby 1.9.x.
 * Fixed a bug in File.basename where an error could be caused by trailing
