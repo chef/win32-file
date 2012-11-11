@@ -9,6 +9,7 @@ class File
 
   class << self
     remove_method :symlink
+    remove_method :readlink
   end
 
   def self.symlink(target, link)
@@ -50,5 +51,40 @@ class File
     end
 
     bool
+  end
+
+  def self.readlink(file)
+    wfile = file.wincode
+    path  = 0.chr * 512
+
+    if File.directory?(file)
+      flags = FILE_FLAG_OPEN_REPARSE_POINT | FILE_FLAG_BACKUP_SEMANTICS
+    else
+      flags = FILE_ATTRIBUTE_NORMAL
+    end
+
+    begin
+      handle = CreateFileW(
+        wfile,
+        GENERIC_READ,
+        FILE_SHARE_READ,
+        nil,
+        OPEN_EXISTING,
+        flags,
+        0
+      )
+
+      if handle == INVALID_HANDLE_VALUE
+        raise SystemCallError.new('CreateFile', FFI.errno)
+      end
+
+      if GetFinalPathNameByHandleW(handle, path, path.size, 0) == 0
+        raise SystemCallError.new('GetFinalPathNameByHandle', FFI.errno)
+      end
+    ensure
+      CloseHandle(handle)
+    end
+
+    path.tr(0.chr, '').strip[4..-1]
   end
 end
