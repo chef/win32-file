@@ -7,9 +7,28 @@ class File
   include Windows::File::Structs
   extend Windows::File::Functions
 
+  WIN32_FILE_VERSION = '0.7.0'
+
   class << self
     remove_method :symlink
+    remove_method :symlink?
     remove_method :readlink
+  end
+
+  def self.decrypt(file)
+    wfile = file.wincode
+    unless DecryptFileW(wfile, 0)
+      raise SystemCallError.new('DecryptFile', FFI.errno)
+    end
+    self
+  end
+
+  def self.encrypt(file)
+    wfile = file.wincode
+    unless EncryptFileW(wfile)
+      raise SystemCallError.new('EncryptFile', FFI.errno)
+    end
+    self
   end
 
   def self.symlink(target, link)
