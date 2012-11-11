@@ -58,7 +58,7 @@ class File
     path  = 0.chr * 512
 
     if File.directory?(file)
-      flags = FILE_FLAG_OPEN_REPARSE_POINT | FILE_FLAG_BACKUP_SEMANTICS
+      flags = FILE_FLAG_BACKUP_SEMANTICS
     else
       flags = FILE_ATTRIBUTE_NORMAL
     end
