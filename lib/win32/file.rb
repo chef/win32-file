@@ -31,6 +31,29 @@ class File
     self
   end
 
+  def self.long_path(file)
+    buffer = 0.chr * 512
+    wfile  = file.wincode
+
+    if GetLongPathNameW(wfile, buffer, buffer.size) == 0
+      raise SystemCallError.new('GetLongPathName', FFI.errno)
+    end
+
+    buffer.tr(0.chr, '').strip
+  end
+
+
+  def self.short_path(file)
+    buffer = 0.chr * 512
+    wfile  = file.wincode
+
+    if GetShortPathNameW(wfile, buffer, buffer.size) == 0
+      raise SystemCallError.new('GetShortPathName', FFI.errno)
+    end
+
+    buffer.tr(0.chr, '').strip
+  end
+
   def self.symlink(target, link)
     flags = File.directory?(target) ? 1 : 0
 

@@ -10,11 +10,13 @@ module Windows
       attach_function :FindFirstFileW, [:buffer_in, :pointer], :ulong
       attach_function :GetFileAttributesW, [:buffer_in], :ulong
       attach_function :GetFinalPathNameByHandleW, [:ulong, :buffer_out, :ulong, :ulong], :ulong
+      attach_function :GetShortPathNameW, [:buffer_in, :buffer_out, :ulong], :ulong
+      attach_function :GetLongPathNameW, [:buffer_in, :buffer_out, :ulong], :ulong
 
       ffi_lib :advapi32
 
       attach_function :EncryptFileW, [:buffer_in], :bool
-      attach_function :DeCryptFileW, [:buffer_in, :ulong], :bool
+      attach_function :DecryptFileW, [:buffer_in, :ulong], :bool
     end
   end
 end
