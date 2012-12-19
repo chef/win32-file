@@ -15,22 +15,6 @@ class File
     remove_method :readlink
   end
 
-  def self.decrypt(file)
-    wfile = file.wincode
-    unless DecryptFileW(wfile, 0)
-      raise SystemCallError.new('DecryptFile', FFI.errno)
-    end
-    self
-  end
-
-  def self.encrypt(file)
-    wfile = file.wincode
-    unless EncryptFileW(wfile)
-      raise SystemCallError.new('EncryptFile', FFI.errno)
-    end
-    self
-  end
-
   def self.long_path(file)
     buffer = 0.chr * 512
     wfile  = file.wincode
