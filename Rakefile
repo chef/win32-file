@@ -24,34 +24,10 @@ namespace 'test' do
     t.warning = true
   end
 
-  Rake::TestTask.new("attributes") do |t|
-    t.verbose = true
-    t.warning = true
-    t.test_files = FileList['test/test_win32_file_attributes.rb']
-  end
-
-  Rake::TestTask.new("constants") do |t|
-    t.verbose = true
-    t.warning = true
-    t.test_files = FileList['test/test_win32_file_constants.rb']
-  end
-
-  Rake::TestTask.new("encryption") do |t|
-    t.verbose = true
-    t.warning = true
-    t.test_files = FileList['test/test_win32_file_encryption.rb']
-  end
-
   Rake::TestTask.new("path") do |t|
     t.verbose = true
     t.warning = true
     t.test_files = FileList['test/test_win32_file_path.rb']
-  end
-
-  Rake::TestTask.new("security") do |t|
-    t.verbose = true
-    t.warning = true
-    t.test_files = FileList['test/test_win32_file_security.rb']
   end
 
   Rake::TestTask.new("stat") do |t|
