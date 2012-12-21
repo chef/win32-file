@@ -56,6 +56,18 @@ class TC_Win32_File_Link < Test::Unit::TestCase
 
   test "symlink? basic functionality" do
     assert_respond_to(File, :symlink?)
+    assert_boolean(File.symlink?(@file))
+  end
+
+  test "symlink? returns expected result" do
+    File.symlink(@file, @link)
+    assert_true(File.symlink?(@link))
+    assert_false(File.symlink?(@file))
+  end
+
+  test "symlink? requires one argument only" do
+    assert_raise(ArgumentError){ File.symlink? }
+    assert_raise(ArgumentError){ File.symlink?(@file, @file) }
   end
 
   test "readlink basic functionality" do
