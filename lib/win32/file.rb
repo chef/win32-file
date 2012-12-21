@@ -10,9 +10,12 @@ class File
   WIN32_FILE_VERSION = '0.7.0'
 
   class << self
+    alias_method :join_orig, :join
     remove_method :basename
     remove_method :dirname
+    remove_method :join
     remove_method :readlink
+    remove_method :split
     remove_method :symlink
     remove_method :symlink?
   end
@@ -122,6 +125,36 @@ class File
     file
   end
 
+  # Join path string components together into a single string.
+  #
+  # This method was reimplemented so that it automatically converts
+  # forward slashes to backslashes. It is otherwise identical to
+  # the core File.join method.
+  #
+  # Examples:
+  #
+  #   File.join("C:", "foo", "bar") # => C:\foo\bar
+  #   File.join("foo", "bar")       # => foo\bar
+  #
+  def self.join(*args)
+    return join_orig(*args).tr("/", "\\")
+  end
+
+  # Splits the given string into a directory and a file component and
+  # returns them in a two element array. This was reimplemented because
+  # the current version does not handle UNC paths properly.
+  #
+  def self.split(file)
+    array = []
+
+    if file.empty? || PathIsRootW(file.wincode)
+      array.push(file, '')
+    else
+      array.push(File.dirname(file), File.basename(file))
+    end
+
+    array
+  end
 
   def self.long_path(file)
     buffer = 0.chr * 512

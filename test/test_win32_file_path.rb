@@ -2,12 +2,9 @@
 # test_win32_file_path.rb
 #
 # Test case for the path related methods of win32-file. You should run this
-# test via the 'rake test' or 'rake test_path' task.
+# test via the 'rake' or 'rake test:path' task.
 #############################################################################
-require 'rubygems'
-gem 'test-unit'
-
-require 'test/unit'
+require 'test-unit'
 require 'win32/file'
 
 class TC_Win32_File_Path < Test::Unit::TestCase
@@ -165,7 +162,6 @@ class TC_Win32_File_Path < Test::Unit::TestCase
     assert_raises(TypeError){ File.dirname(nil) }
     assert_raises(TypeError){ File.dirname(['foo', 'bar']) }
   end
-=begin
 
   test "split method basic functionality" do
     assert_respond_to(File, :split)
@@ -206,7 +202,6 @@ class TC_Win32_File_Path < Test::Unit::TestCase
     assert_nothing_raised{ File.split(path) }
     assert_equal("C:\\foo\\bar", path)
   end
-=end
 
   test "File.long_path basic functionality" do
     assert_respond_to(File, :long_path)
@@ -229,7 +224,6 @@ class TC_Win32_File_Path < Test::Unit::TestCase
     assert_equal('PATH_T~1.TXT', File.basename(path))
   end
 
-=begin
   test "join method works as expected" do
     assert_respond_to(File, :join)
   end
@@ -256,7 +250,6 @@ class TC_Win32_File_Path < Test::Unit::TestCase
     assert_equal('foo', File.join('foo'))
     assert_equal('c:', File.join('c:'))
   end
-=end
 
   def teardown
     @short_file = nil
