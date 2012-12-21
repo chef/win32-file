@@ -24,6 +24,12 @@ namespace 'test' do
     t.warning = true
   end
 
+  Rake::TestTask.new("link") do |t|
+    t.verbose = true
+    t.warning = true
+    t.test_files = FileList['test/test_win32_file_link.rb']
+  end
+
   Rake::TestTask.new("path") do |t|
     t.verbose = true
     t.warning = true
