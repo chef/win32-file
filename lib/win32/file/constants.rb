@@ -13,6 +13,10 @@ module Windows
       INVALID_FILE_ATTRIBUTES = 0xFFFFFFFF
       IO_REPARSE_TAG_SYMLINK = 0xA000000C
       OPEN_EXISTING = 3
+
+      DRIVE_REMOVABLE = 2
+      DRIVE_CDROM     = 5
+      DRIVE_RAMDISK   = 6
     end
   end
 end

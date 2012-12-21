@@ -6,27 +6,30 @@
 #####################################################################
 require 'test-unit'
 require 'win32/file'
+require 'ffi'
 
 class TC_Win32_File_Stat < Test::Unit::TestCase
-   def self.startup
-      Dir.chdir(File.expand_path(File.dirname(__FILE__)))
-      @@file = File.join(Dir.pwd, 'stat_test.txt')
-      File.open(@@file, 'w'){ |fh| fh.puts "This is a test." }
+  extend FFI::Library
+  ffi_lib :kernel32
 
-      @@block_dev = nil
+  attach_function :GetDriveTypeA, [:string], :uint
 
-=begin
-      # Find a block device
-      'A'.upto('Z'){ |volume|
-         volume += ":\\"
-         case GetDriveType(volume)
-            when DRIVE_REMOVABLE, DRIVE_CDROM, DRIVE_RAMDISK
-               @@block_dev = volume
-               break
-         end
-      }
-=end
-   end
+  def self.startup
+    Dir.chdir(File.expand_path(File.dirname(__FILE__)))
+    @@file = File.join(Dir.pwd, 'stat_test.txt')
+    File.open(@@file, 'w'){ |fh| fh.puts "This is a test." }
+
+    @@block_dev = nil
+
+    # Find a block device
+    'A'.upto('Z'){ |volume|
+       volume += ":\\"
+       if [2,5,6].include?(GetDriveTypeA(volume))
+         @@block_dev = volume
+         break
+       end
+    }
+  end
 
   def setup
     @blksize = 4096 # Most likely
@@ -47,23 +50,29 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     assert_raises(ArgumentError){ File.blksize(@@file, 'foo') }
   end
 
+  test "blockdev? basic functionality" do
+    assert_respond_to(File, :blockdev?)
+    assert_nothing_raised{ File.blockdev?("C:\\") }
+    assert_boolean(File.blockdev?("NUL"))
+  end
+
+  test "blockdev? returns false for non-block devices" do
+    assert_false(File.blockdev?("C:\\foo\\bar"))
+    assert_false(File.blockdev?("NUL"))
+  end
+
+  test "blockdev? returns true for block devices" do
+    omit_unless(@@block_dev, "Could not find block device")
+    omit_unless(File.exists?(@@block_dev), "No media in device - skipping")
+    assert_true(File.blockdev?(@@block_dev))
+  end
+
+  test "blockdev? requires a single argument" do
+    assert_raises(ArgumentError){ File.blockdev? }
+    assert_raises(ArgumentError){ File.blockdev?(@@file, "foo") }
+  end
+
 =begin
-   # The test for a block device will fail unless the D: drive is a CDROM.
-   def test_blockdev
-      assert_respond_to(File, :blockdev?)
-      assert_nothing_raised{ File.blockdev?("C:\\") }
-      assert_equal(false, File.blockdev?("NUL"))
-
-      omit_unless(@@block_dev, "Could not find block device")
-      omit_unless(File.exists?(@@block_dev), "No media in device - skipping")
-      assert_equal(true, File.blockdev?(@@block_dev))
-   end
-
-   def test_blockdev_expected_errors
-      assert_raises(ArgumentError){ File.blockdev? }
-      assert_raises(ArgumentError){ File.blockdev?(@@file, "foo") }
-   end
-
    def test_chardev
       assert_respond_to(File, :chardev?)
       assert_nothing_raised{ File.chardev?("NUL") }

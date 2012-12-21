@@ -9,6 +9,7 @@ module Windows
       attach_function :CreateSymbolicLinkW, [:buffer_in, :buffer_in, :ulong], :bool
       attach_function :FindFirstFileW, [:buffer_in, :pointer], :ulong
       attach_function :GetDiskFreeSpaceW, [:buffer_in, :pointer, :pointer, :pointer, :pointer], :bool
+      attach_function :GetDriveTypeW, [:buffer_in], :uint
       attach_function :GetFileAttributesW, [:buffer_in], :ulong
       attach_function :GetFinalPathNameByHandleW, [:ulong, :buffer_out, :ulong, :ulong], :ulong
       attach_function :GetShortPathNameW, [:buffer_in, :buffer_out, :ulong], :ulong

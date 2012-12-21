@@ -282,4 +282,16 @@ class File
 
     size
   end
+
+  # Returns whether or not the file is a block device. For MS Windows a
+  # block device is a removable drive, cdrom or ramdisk.
+  #
+  def self.blockdev?(file)
+    wide_file = file.wincode
+    blockdevs = [DRIVE_REMOVABLE, DRIVE_CDROM, DRIVE_RAMDISK]
+
+    PathStripToRootW(wide_file)
+
+    blockdevs.include?(GetDriveTypeW(wide_file))
+  end
 end
