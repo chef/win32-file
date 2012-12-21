@@ -74,6 +74,26 @@ class TC_Win32_File_Link < Test::Unit::TestCase
     assert_respond_to(File, :readlink)
   end
 
+  test "readlink returns the expected value when reading a symlink" do
+    File.symlink(@file, @link)
+    expected = File.expand_path(@file).tr("/", "\\")
+    assert_equal(expected, File.readlink(@file))
+  end
+
+  test "readlink returns the expected value when reading a regular file" do
+    expected = File.expand_path(@file).tr("/", "\\")
+    assert_equal(expected, File.readlink(@file))
+  end
+
+  test "readlink requires one argument only" do
+    assert_raise(ArgumentError){ File.readlink }
+    assert_raise(ArgumentError){ File.readlink(@link, @link) }
+  end
+
+  test "readlink raises an error if the file is not found" do
+    assert_raise(Errno::ENOENT){ File.readlink('bogus.txt') }
+  end
+
   def teardown
     File.delete(@link) if File.exists?(@link)
     @link  = nil
