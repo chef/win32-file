@@ -12,6 +12,13 @@ module Windows
       attach_function :GetFinalPathNameByHandleW, [:ulong, :buffer_out, :ulong, :ulong], :ulong
       attach_function :GetShortPathNameW, [:buffer_in, :buffer_out, :ulong], :ulong
       attach_function :GetLongPathNameW, [:buffer_in, :buffer_out, :ulong], :ulong
+
+      ffi_lib :shlwapi
+
+      attach_function :PathFindExtensionW, [:buffer_in], :pointer
+      attach_function :PathIsRootW, [:buffer_in], :bool
+      attach_function :PathStripPathW, [:buffer_in], :void
+      attach_function :PathRemoveExtensionW, [:buffer_in], :void
     end
   end
 end

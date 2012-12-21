@@ -12,7 +12,7 @@ require 'win32/file'
 
 class TC_Win32_File_Path < Test::Unit::TestCase
   def self.startup
-    Dir.chdir(File.dirname(File.expand_path(File.basename(__FILE__))))
+    Dir.chdir(File.expand_path(File.dirname(__FILE__)))
     @@file = File.join(Dir.pwd, 'path_test.txt')
     File.open(@@file, 'w'){ |fh| fh.puts "This is a path test." }
   end
@@ -22,7 +22,6 @@ class TC_Win32_File_Path < Test::Unit::TestCase
     @short_file = File.join(Dir.pwd, 'PATH_T~1.TXT').tr("/", "\\")
   end
 
-=begin
   test "basename method basic functionality" do
     assert_respond_to(File, :basename)
     assert_nothing_raised{ File.basename("C:\\foo") }
@@ -101,6 +100,7 @@ class TC_Win32_File_Path < Test::Unit::TestCase
     assert_equal("foo.txt", File.basename("foo.txt\\\\\\"))
   end
 
+=begin
   test "dirname basic functionality" do
     assert_respond_to(File, :dirname)
     assert_nothing_raised{ File.dirname("C:\\foo") }
