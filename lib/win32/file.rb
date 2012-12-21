@@ -47,6 +47,8 @@ class File
     unless CreateSymbolicLinkW(wlink, wtarget, flags)
       raise SystemCallError.new('CreateSymbolicLink', FFI.errno)
     end
+
+    0 # Comply with spec
   end
 
   def self.symlink?(file)
