@@ -294,4 +294,42 @@ class File
 
     blockdevs.include?(GetDriveTypeW(wide_file))
   end
+
+  # Returns whether or not the file is a character device.
+  #
+  #--
+  # At the moment this will not deal with locked files. That support will
+  # be added back in once an updated win32-file-stat is released.
+  #
+  def self.chardev?(file)
+    wide_file = file.wincode
+
+    begin
+      handle = CreateFileW(
+        wide_file,
+        0,
+        0,
+        nil,
+        OPEN_EXISTING,
+        FILE_FLAG_BACKUP_SEMANTICS, # Need this for directories
+        0
+      )
+
+      # We raise a SystemCallError explicitly here in order to maintain
+      # compatibility with the FileUtils module.
+      if handle == INVALID_HANDLE_VALUE
+        raise SystemCallError.new("CreateFile", FFI.errno)
+      end
+
+      file_type = GetFileType(handle)
+
+      if file_type == FILE_TYPE_UNKNOWN && FFI.errno != NO_ERROR
+        raise SystemCallError.new("GetFileType", FFI.errno)
+      end
+    ensure
+      CloseHandle(handle)
+    end
+
+    file_type == FILE_TYPE_CHAR
+  end
 end

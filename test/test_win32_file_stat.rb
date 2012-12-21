@@ -72,18 +72,22 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     assert_raises(ArgumentError){ File.blockdev?(@@file, "foo") }
   end
 
-=begin
-   def test_chardev
-      assert_respond_to(File, :chardev?)
-      assert_nothing_raised{ File.chardev?("NUL") }
-      assert_equal(true, File.chardev?("NUL"))
-      assert_equal(false, File.chardev?(@@file))
-   end
+  test "chardev? basic functionality" do
+    assert_respond_to(File, :chardev?)
+    assert_nothing_raised{ File.chardev?("NUL") }
+    assert_boolean(File.chardev?(@@file))
+  end
 
-   def test_chardev_expected_errors
-      assert_raises(ArgumentError){ File.chardev? }
-      assert_raises(ArgumentError){ File.chardev?(@@file, "foo") }
-   end
+  test "chardev? method returns the expected result" do
+    assert_true(File.chardev?("NUL"))
+    assert_false(File.chardev?(@@file))
+  end
+
+  test "chardev? requires a single argument" do
+    assert_raises(ArgumentError){ File.chardev? }
+    assert_raises(ArgumentError){ File.chardev?(@@file, "foo") }
+  end
+=begin
 
    # Ensure that not only does the File class respond to the stat method,
    # but also that it's returning the File::Stat class from the
