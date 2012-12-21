@@ -11,6 +11,7 @@ class File
 
   class << self
     remove_method :basename
+    remove_method :dirname
     remove_method :readlink
     remove_method :symlink
     remove_method :symlink?
@@ -69,6 +70,58 @@ class File
 
     file
   end
+
+  # Returns all components of the filename given in +filename+ except the
+  # last one.
+  #
+  # This was reimplemented because the current version does not handle UNC
+  # paths properly, i.e. it should not return anything less than the root.
+  # In all other respects it is identical to the current implementation.
+  #
+  # Also, this method will convert all forward slashes to backslashes.
+  #
+  # Examples:
+  #
+  #    File.dirname("C:\\foo\\bar\\baz.txt") -> "C:\\foo\\bar"
+  #    File.dirname("\\\\foo\\bar")          -> "\\\\foo\\bar"
+  #
+  def self.dirname(file)
+    raise TypeError unless file.is_a?(String)
+
+    # Short circuit for empty paths
+    return '.' if file.empty?
+
+    # Store original encoding, restore it later
+    encoding = file.encoding
+
+    # Convert slashes to backslashes for the Windows API functions
+    file.tr!(File::SEPARATOR, File::ALT_SEPARATOR)
+
+    # Convert to UTF-16LE
+    wfile = file.wincode
+
+    # Return a root path as-is.
+    return file if PathIsRootW(wfile)
+
+    # Remove trailing slashes if present
+    while result = PathRemoveBackslashW(wfile)
+      break unless result.empty?
+    end
+
+    # Remove trailing file name if present
+    PathRemoveFileSpecW(wfile)
+
+    # Return to original encoding
+    file = wfile.encode(encoding)[/^[^\0]*/]
+
+    # Empty paths, short relative paths
+    if file.nil? || (file && file.empty?)
+      return '.'
+    end
+
+    file
+  end
+
 
   def self.long_path(file)
     buffer = 0.chr * 512
@@ -170,5 +223,3 @@ class File
     path.tr(0.chr, '').strip[4..-1]
   end
 end
-
-p File.basename("C:/foo/bar.txt", ".txt")

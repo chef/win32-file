@@ -100,7 +100,6 @@ class TC_Win32_File_Path < Test::Unit::TestCase
     assert_equal("foo.txt", File.basename("foo.txt\\\\\\"))
   end
 
-=begin
   test "dirname basic functionality" do
     assert_respond_to(File, :dirname)
     assert_nothing_raised{ File.dirname("C:\\foo") }
@@ -166,6 +165,7 @@ class TC_Win32_File_Path < Test::Unit::TestCase
     assert_raises(TypeError){ File.dirname(nil) }
     assert_raises(TypeError){ File.dirname(['foo', 'bar']) }
   end
+=begin
 
   test "split method basic functionality" do
     assert_respond_to(File, :split)
