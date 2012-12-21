@@ -11,6 +11,7 @@ class File
 
   class << self
     alias_method :join_orig, :join
+
     remove_method :basename
     remove_method :dirname
     remove_method :join
@@ -254,5 +255,31 @@ class File
     end
 
     path.tr(0.chr, '').strip[4..-1]
+  end
+
+  ## STAT METHODS
+  #
+  # These are inlined for now but will eventually be removed once I've
+  # converted win32-file-stat to use FFI.
+
+  def self.blksize(file)
+    wfile = file.wincode if file
+    size  = nil
+
+    sectors = FFI::MemoryPointer.new(:ulong)
+    bytes   = FFI::MemoryPointer.new(:ulong)
+    free    = FFI::MemoryPointer.new(:ulong)
+    total   = FFI::MemoryPointer.new(:ulong)
+
+    unless PathStripToRootW(wfile)
+      wfile = nil # Default to root drive on relative paths
+    end
+
+    # Don't check for an error here, just default to nil
+    if GetDiskFreeSpaceW(wfile, sectors, bytes, free, total)
+      size = sectors.read_ulong * bytes.read_ulong
+    end
+
+    size
   end
 end

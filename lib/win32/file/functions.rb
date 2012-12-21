@@ -8,6 +8,7 @@ module Windows
       attach_function :CreateFileW, [:buffer_in, :ulong, :ulong, :pointer, :ulong, :ulong, :ulong], :ulong
       attach_function :CreateSymbolicLinkW, [:buffer_in, :buffer_in, :ulong], :bool
       attach_function :FindFirstFileW, [:buffer_in, :pointer], :ulong
+      attach_function :GetDiskFreeSpaceW, [:buffer_in, :pointer, :pointer, :pointer, :pointer], :bool
       attach_function :GetFileAttributesW, [:buffer_in], :ulong
       attach_function :GetFinalPathNameByHandleW, [:ulong, :buffer_out, :ulong, :ulong], :ulong
       attach_function :GetShortPathNameW, [:buffer_in, :buffer_out, :ulong], :ulong
@@ -21,6 +22,7 @@ module Windows
       attach_function :PathRemoveBackslashW, [:buffer_in], :string
       attach_function :PathRemoveFileSpecW, [:buffer_in], :bool
       attach_function :PathRemoveExtensionW, [:buffer_in], :void
+      attach_function :PathStripToRootW, [:buffer_in], :bool
     end
   end
 end
