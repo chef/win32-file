@@ -94,17 +94,24 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     assert_raises(ArgumentError){ File.chardev?(@@file, "foo") }
   end
 
+  test "lstat is an alias for stat" do
+    assert_respond_to(File, :lstat)
+    assert_alias_method(File, :stat, :lstat)
+  end
+
+  test "directory? method basic functionality" do
+    assert_respond_to(File, :directory?)
+    assert_nothing_raised{ File.directory?(Dir.pwd) }
+    assert_boolean(File.directory?(Dir.pwd))
+  end
+
+  test "directory? method returns expected results" do
+    assert_true(File.directory?(Dir.pwd))
+    assert_false(File.directory?(@@file))
+    assert_false(File.directory?("NUL"))
+  end
 
 =begin
-   # This was added after it was discovered that lstat is not aliased
-   # to stat automatically on Windows.
-   #
-   def test_lstat_class
-      assert_respond_to(File, :lstat)
-      assert_kind_of(File::Stat, File.lstat(@@file))
-      assert_equal(false, File.stat(@@file).hidden?)
-   end
-
    def test_stat_instance
       File.open(@@file){ |f|
          assert_respond_to(f, :stat)

@@ -13,7 +13,8 @@ class File
   class << self
     alias_method :join_orig, :join
 
-    remove_method :basename, :blockdev?, :chardev?, :dirname, :join
+    remove_method :basename, :blockdev?, :chardev?, :dirname, :directory?
+    remove_method :join, :lstat
     remove_method :readlink
     remove_method :split, :stat
     remove_method :symlink
@@ -278,12 +279,6 @@ class File
 
   ## STAT METHODS
 
-  # Returns a File::Stat object as defined in the win32-file-stat library.
-  #
-  def self.stat(file)
-    File::Stat.new(file)
-  end
-
   # Returns the filesystem's block size.
   def self.blksize(file)
     File::Stat.new(file).blksize
@@ -300,5 +295,21 @@ class File
   #
   def self.chardev?(file)
     File::Stat.new(file).chardev?
+  end
+
+  # Returns whether or not the file is a directory.
+  #
+  def self.directory?(file)
+    File::Stat.new(file).directory?
+  end
+
+  # Returns a File::Stat object as defined in the win32-file-stat library.
+  #
+  def self.stat(file)
+    File::Stat.new(file)
+  end
+
+  class << self
+    alias lstat stat
   end
 end
