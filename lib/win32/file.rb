@@ -15,7 +15,7 @@ class File
 
     remove_method :basename, :blockdev?, :chardev?, :dirname, :join
     remove_method :readlink
-    remove_method :split
+    remove_method :split, :stat
     remove_method :symlink
     remove_method :symlink?
   end
@@ -280,7 +280,7 @@ class File
 
   # Returns a File::Stat object as defined in the win32-file-stat library.
   #
-  def stat(file)
+  def self.stat(file)
     File::Stat.new(file)
   end
 
