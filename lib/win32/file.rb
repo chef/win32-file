@@ -154,8 +154,16 @@ class File
     array
   end
 
+  # Returns +path+ in long format. For example, if 'SOMEFI~1.TXT'
+  # was the argument provided, and the short representation for
+  # 'somefile.txt', then this method would return 'somefile.txt'.
+  #
+  # Note that certain file system optimizations may prevent this method
+  # from working as expected. In that case, you will get back the file
+  # name in 8.3 format.
+  #
   def self.long_path(file)
-    buffer = 0.chr * 512
+    buffer = 0.chr * 1024
     wfile  = file.wincode
 
     if GetLongPathNameW(wfile, buffer, buffer.size) == 0
@@ -165,8 +173,11 @@ class File
     buffer.tr(0.chr, '').strip
   end
 
+  # Returns +path+ in 8.3 format. For example, 'c:\documentation.doc'
+  # would be returned as 'c:\docume~1.doc'.
+  #
   def self.short_path(file)
-    buffer = 0.chr * 512
+    buffer = 0.chr * 1024
     wfile  = file.wincode
 
     if GetShortPathNameW(wfile, buffer, buffer.size) == 0
@@ -176,6 +187,12 @@ class File
     buffer.tr(0.chr, '').strip
   end
 
+  # Creates a symbolic link called +new_name+ for the file or directory
+  # +old_name+.
+  #
+  # This method requires Windows Vista or later to work. Otherwise, it
+  # returns nil as per MRI.
+  #
   def self.symlink(target, link)
     flags = File.directory?(target) ? 1 : 0
 
@@ -219,6 +236,11 @@ class File
     bool
   end
 
+  # Returns the path of the of the symbolic link referred to by +file+.
+  #
+  # Requires Windows Vista or later. On older versions of Windows it
+  # will raise a NotImplementedError, as per MRI.
+  #
   def self.readlink(file)
     wfile = file.wincode
     path  = 0.chr * 512
@@ -255,78 +277,28 @@ class File
   end
 
   ## STAT METHODS
+
+  # Returns a File::Stat object as defined in the win32-file-stat library.
   #
-  # These are inlined for now but will eventually be removed once I've
-  # converted win32-file-stat to use FFI.
+  def stat(file)
+    File::Stat.new(file)
+  end
 
+  # Returns the filesystem's block size.
   def self.blksize(file)
-    wfile = file.wincode if file
-    size  = nil
-
-    sectors = FFI::MemoryPointer.new(:ulong)
-    bytes   = FFI::MemoryPointer.new(:ulong)
-    free    = FFI::MemoryPointer.new(:ulong)
-    total   = FFI::MemoryPointer.new(:ulong)
-
-    unless PathStripToRootW(wfile)
-      wfile = nil # Default to root drive on relative paths
-    end
-
-    # Don't check for an error here, just default to nil
-    if GetDiskFreeSpaceW(wfile, sectors, bytes, free, total)
-      size = sectors.read_ulong * bytes.read_ulong
-    end
-
-    size
+    File::Stat.new(file).blksize
   end
 
   # Returns whether or not the file is a block device. For MS Windows a
   # block device is a removable drive, cdrom or ramdisk.
   #
   def self.blockdev?(file)
-    wide_file = file.wincode
-    blockdevs = [DRIVE_REMOVABLE, DRIVE_CDROM, DRIVE_RAMDISK]
-
-    PathStripToRootW(wide_file)
-
-    blockdevs.include?(GetDriveTypeW(wide_file))
+    File::Stat.new(file).blockdev?
   end
 
   # Returns whether or not the file is a character device.
   #
-  #--
-  # At the moment this will not deal with locked files. That support will
-  # be added back in once an updated win32-file-stat is released.
-  #
   def self.chardev?(file)
-    wide_file = file.wincode
-
-    begin
-      handle = CreateFileW(
-        wide_file,
-        0,
-        0,
-        nil,
-        OPEN_EXISTING,
-        FILE_FLAG_BACKUP_SEMANTICS, # Need this for directories
-        0
-      )
-
-      # We raise a SystemCallError explicitly here in order to maintain
-      # compatibility with the FileUtils module.
-      if handle == INVALID_HANDLE_VALUE
-        raise SystemCallError.new("CreateFile", FFI.errno)
-      end
-
-      file_type = GetFileType(handle)
-
-      if file_type == FILE_TYPE_UNKNOWN && FFI.errno != NO_ERROR
-        raise SystemCallError.new("GetFileType", FFI.errno)
-      end
-    ensure
-      CloseHandle(handle)
-    end
-
-    file_type == FILE_TYPE_CHAR
+    File::Stat.new(file).chardev?
   end
 end
