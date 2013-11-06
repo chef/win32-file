@@ -1,6 +1,7 @@
 require File.join(File.dirname(__FILE__), 'file', 'constants')
 require File.join(File.dirname(__FILE__), 'file', 'structs')
 require File.join(File.dirname(__FILE__), 'file', 'functions')
+require 'win32/file/stat'
 
 class File
   include Windows::File::Constants
@@ -12,9 +13,7 @@ class File
   class << self
     alias_method :join_orig, :join
 
-    remove_method :basename
-    remove_method :dirname
-    remove_method :join
+    remove_method :basename, :blockdev?, :chardev?, :dirname, :join
     remove_method :readlink
     remove_method :split
     remove_method :symlink
@@ -46,14 +45,13 @@ class File
 
     return file if file.empty? # Return an empty path as-is.
 
-    # Required for Windows API functions to work properly.
-    file.tr!(File::SEPARATOR, File::ALT_SEPARATOR)
-
     encoding = file.encoding
     wfile = file.wincode
 
     # Return a root path as-is.
-    return file if PathIsRootW(wfile)
+    if PathIsRootW(wfile)
+      return file.tr(File::SEPARATOR, File::ALT_SEPARATOR)
+    end
 
     PathStripPathW(wfile) # Gives us the basename
 
@@ -98,14 +96,13 @@ class File
     # Store original encoding, restore it later
     encoding = file.encoding
 
-    # Convert slashes to backslashes for the Windows API functions
-    file.tr!(File::SEPARATOR, File::ALT_SEPARATOR)
-
     # Convert to UTF-16LE
     wfile = file.wincode
 
     # Return a root path as-is.
-    return file if PathIsRootW(wfile)
+    if PathIsRootW(wfile)
+      return file.tr(File::SEPARATOR, File::ALT_SEPARATOR)
+    end
 
     # Remove trailing slashes if present
     while result = PathRemoveBackslashW(wfile)
