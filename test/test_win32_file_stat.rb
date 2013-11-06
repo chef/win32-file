@@ -35,6 +35,12 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     @blksize = 4096 # Most likely
   end
 
+  test "File::Stat class returned is from win32-file-stat library" do
+    assert_respond_to(File, :stat)
+    assert_kind_of(File::Stat, File.stat(@@file))
+    assert_nothing_raised{ File.stat(@@file).hidden? }
+  end
+
   test "blksize basic functionality" do
     assert_respond_to(File, :blksize)
     assert_kind_of(Fixnum, File.blksize(@@file))
@@ -57,12 +63,12 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
   end
 
   test "blockdev? returns false for non-block devices" do
-    assert_false(File.blockdev?("C:\\foo\\bar"))
+    assert_false(File.blockdev?(@@file))
     assert_false(File.blockdev?("NUL"))
   end
 
   test "blockdev? returns true for block devices" do
-    omit_unless(@@block_dev, "Could not find block device")
+    omit_unless(@@block_dev)
     omit_unless(File.exists?(@@block_dev), "No media in device - skipping")
     assert_true(File.blockdev?(@@block_dev))
   end
@@ -87,18 +93,9 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     assert_raises(ArgumentError){ File.chardev? }
     assert_raises(ArgumentError){ File.chardev?(@@file, "foo") }
   end
+
+
 =begin
-
-   # Ensure that not only does the File class respond to the stat method,
-   # but also that it's returning the File::Stat class from the
-   # win32-file-stat package.
-   #
-   def test_stat_class
-      assert_respond_to(File, :stat)
-      assert_kind_of(File::Stat, File.stat(@@file))
-      assert_equal(false, File.stat(@@file).hidden?)
-   end
-
    # This was added after it was discovered that lstat is not aliased
    # to stat automatically on Windows.
    #
