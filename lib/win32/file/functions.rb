@@ -4,18 +4,22 @@ module Windows
       extend FFI::Library
       ffi_lib :kernel32
 
-      attach_function :CloseHandle, [:ulong], :bool
-      attach_function :CreateFileW, [:buffer_in, :ulong, :ulong, :pointer, :ulong, :ulong, :ulong], :ulong
-      attach_function :CreateSymbolicLinkW, [:buffer_in, :buffer_in, :ulong], :bool
-      attach_function :FindFirstFileW, [:buffer_in, :pointer], :ulong
+      typedef :ulong, :dword
+      typedef :uintptr_t, :handle
+      typedef :pointer, :ptr
+
+      attach_function :CloseHandle, [:handle], :bool
+      attach_function :CreateFileW, [:buffer_in, :dword, :dword, :pointer, :dword, :dword, :handle], :handle
+      attach_function :CreateSymbolicLinkW, [:buffer_in, :buffer_in, :dword], :bool
+      attach_function :FindFirstFileW, [:buffer_in, :pointer], :handle
       attach_function :GetDiskFreeSpaceW, [:buffer_in, :pointer, :pointer, :pointer, :pointer], :bool
       attach_function :GetDriveTypeW, [:buffer_in], :uint
-      attach_function :GetFileType, [:ulong], :ulong
-      attach_function :GetFileAttributesW, [:buffer_in], :ulong
-      attach_function :GetFinalPathNameByHandleW, [:ulong, :buffer_out, :ulong, :ulong], :ulong
-      attach_function :GetShortPathNameW, [:buffer_in, :buffer_out, :ulong], :ulong
-      attach_function :GetLongPathNameW, [:buffer_in, :buffer_out, :ulong], :ulong
-      attach_function :QueryDosDeviceA, [:string, :buffer_out, :ulong], :ulong
+      attach_function :GetFileType, [:handle], :dword
+      attach_function :GetFileAttributesW, [:buffer_in], :dword
+      attach_function :GetFinalPathNameByHandleW, [:handle, :buffer_out, :dword, :dword], :dword
+      attach_function :GetShortPathNameW, [:buffer_in, :buffer_out, :dword], :dword
+      attach_function :GetLongPathNameW, [:buffer_in, :buffer_out, :dword], :dword
+      attach_function :QueryDosDeviceA, [:string, :buffer_out, :dword], :dword
 
       ffi_lib :shlwapi
 
