@@ -14,7 +14,7 @@ class File
     alias_method :join_orig, :join
 
     remove_method :basename, :blockdev?, :chardev?, :dirname, :directory?
-    remove_method :join, :lstat
+    remove_method :executable?, :executable_real?, :file?, :join, :lstat
     remove_method :readlink
     remove_method :split, :stat
     remove_method :symlink
@@ -303,13 +303,25 @@ class File
     File::Stat.new(file).directory?
   end
 
+  # Returns whether or not the file is executable.
+  def self.executable?(file)
+    File::Stat.new(file).executable?
+  end
+
+  # Returns whether or not the file is a regular file.
+  def self.file?(file)
+    File::Stat.new(file).file?
+  end
+
   # Returns a File::Stat object as defined in the win32-file-stat library.
   #
   def self.stat(file)
     File::Stat.new(file)
   end
 
+  # Singleton aliases
   class << self
     alias lstat stat
+    alias executable_real? executable?
   end
 end

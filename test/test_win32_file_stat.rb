@@ -5,6 +5,7 @@
 # this via the 'rake test' or 'rake test:stat' task.
 #####################################################################
 require 'test-unit'
+require 'fileutils'
 require 'win32/file'
 require 'ffi'
 
@@ -18,6 +19,9 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     Dir.chdir(File.expand_path(File.dirname(__FILE__)))
     @@file = File.join(Dir.pwd, 'stat_test.txt')
     File.open(@@file, 'w'){ |fh| fh.puts "This is a test." }
+
+    @@exe_file = File.join(Dir.pwd, 'stat_test.exe')
+    FileUtils.touch(@@exe_file)
 
     @@block_dev = nil
 
@@ -111,6 +115,30 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     assert_false(File.directory?("NUL"))
   end
 
+  test "executable? method basic functionality" do
+    assert_respond_to(File, :executable?)
+    assert_nothing_raised{ File.executable?(Dir.pwd) }
+    assert_boolean(File.executable?(Dir.pwd))
+  end
+
+  test "executable? method returns expected results" do
+    assert_true(File.executable?(@@exe_file))
+    assert_false(File.executable?(@@file))
+    assert_false(File.directory?("NUL"))
+  end
+
+  test "file? method basic functionality" do
+    assert_respond_to(File, :file?)
+    assert_nothing_raised{ File.file?(Dir.pwd) }
+    assert_boolean(File.file?(Dir.pwd))
+  end
+
+  test "file? method returns expected results" do
+    assert_true(File.file?(@@file))
+    assert_true(File.file?(Dir.pwd))
+    assert_false(File.file?('NUL'))
+  end
+
 =begin
    def test_stat_instance
       File.open(@@file){ |f|
@@ -127,7 +155,9 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
 
   def self.shutdown
     File.delete(@@file) if File.exists?(@@file)
+    File.delete(@@exe_file) if File.exists?(@@exe_file)
     @@file = nil
+    @@exe_file = nil
     @@block_dev = nil
   end
 end
