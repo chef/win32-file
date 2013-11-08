@@ -33,3 +33,11 @@ module Windows
     end
   end
 end
+
+class String
+  # Read a wide character string up until the first double null, and delete
+  # any remaining null characters.
+  def wstrip
+    self[/^.*?(?=\x00{2})/].delete(0.chr)
+  end
+end
