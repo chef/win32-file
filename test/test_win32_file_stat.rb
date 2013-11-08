@@ -151,6 +151,17 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     assert_equal('characterSpecial', File.ftype('NUL'))
   end
 
+  test "grpowned? method basic functionality" do
+    assert_respond_to(File, :grpowned?)
+    assert_nothing_raised{ File.grpowned?(Dir.pwd) }
+    assert_boolean(File.grpowned?(Dir.pwd))
+  end
+
+  test "grpowned? returns expected results" do
+    assert_true(File.grpowned?(@@file))
+    assert_false(File.grpowned?('NUL'))
+  end
+
 =begin
    def test_stat_instance
       File.open(@@file){ |f|

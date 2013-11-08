@@ -14,7 +14,7 @@ class File
     alias_method :join_orig, :join
 
     remove_method :basename, :blockdev?, :chardev?, :dirname, :directory?
-    remove_method :executable?, :executable_real?, :file?, :ftype
+    remove_method :executable?, :executable_real?, :file?, :ftype, :grpowned?
     remove_method :join, :lstat
     remove_method :readlink
     remove_method :split, :stat
@@ -319,6 +319,10 @@ class File
   #
   def self.ftype(file)
     File::Stat.new(file).ftype
+  end
+
+  def self.grpowned?(file)
+    File::Stat.new(file).grpowned?
   end
 
   # Returns a File::Stat object as defined in the win32-file-stat library.
