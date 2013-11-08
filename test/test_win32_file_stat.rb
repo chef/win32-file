@@ -173,6 +173,23 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     assert_false(File.owned?('NUL'))
   end
 
+  test "pipe? method basic functionality" do
+    assert_respond_to(File, :pipe?)
+    assert_nothing_raised{ File.pipe?(Dir.pwd) }
+    assert_boolean(File.pipe?(Dir.pwd))
+  end
+
+  test "pipe? returns expected results" do
+    assert_false(File.pipe?(@@file))
+    assert_false(File.pipe?(Dir.pwd))
+    assert_false(File.pipe?('NUL'))
+  end
+
+  test "socket? is an alias for pipe?" do
+    assert_respond_to(File, :socket?)
+    assert_alias_method(File, :socket?, :pipe?)
+  end
+
 =begin
    def test_stat_instance
       File.open(@@file){ |f|

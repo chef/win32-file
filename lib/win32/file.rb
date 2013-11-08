@@ -15,7 +15,7 @@ class File
 
     remove_method :basename, :blockdev?, :chardev?, :dirname, :directory?
     remove_method :executable?, :executable_real?, :file?, :ftype, :grpowned?
-    remove_method :join, :lstat, :owned?
+    remove_method :join, :lstat, :owned?, :pipe?, :socket?
     remove_method :readlink
     remove_method :split, :stat
     remove_method :symlink
@@ -329,6 +329,10 @@ class File
     File::Stat.new(file).owned?
   end
 
+  def self.pipe?(file)
+    File::Stat.new(file).pipe?
+  end
+
   # Returns a File::Stat object as defined in the win32-file-stat library.
   #
   def self.stat(file)
@@ -339,5 +343,6 @@ class File
   class << self
     alias lstat stat
     alias executable_real? executable?
+    alias socket? pipe?
   end
 end
