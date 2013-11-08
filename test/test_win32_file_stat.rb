@@ -162,6 +162,17 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     assert_false(File.grpowned?('NUL'))
   end
 
+  test "owned? method basic functionality" do
+    assert_respond_to(File, :owned?)
+    assert_nothing_raised{ File.owned?(Dir.pwd) }
+    assert_boolean(File.owned?(Dir.pwd))
+  end
+
+  test "owned? returns expected results" do
+    assert_true(File.owned?(@@file))
+    assert_false(File.owned?('NUL'))
+  end
+
 =begin
    def test_stat_instance
       File.open(@@file){ |f|
