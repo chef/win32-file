@@ -14,7 +14,8 @@ class File
     alias_method :join_orig, :join
 
     remove_method :basename, :blockdev?, :chardev?, :dirname, :directory?
-    remove_method :executable?, :executable_real?, :file?, :join, :lstat
+    remove_method :executable?, :executable_real?, :file?, :ftype
+    remove_method :join, :lstat
     remove_method :readlink
     remove_method :split, :stat
     remove_method :symlink
@@ -311,6 +312,13 @@ class File
   # Returns whether or not the file is a regular file.
   def self.file?(file)
     File::Stat.new(file).file?
+  end
+
+  # Identifies the type of file. The return string is one of 'file',
+  # 'directory', 'characterSpecial', 'socket' or 'unknown'.
+  #
+  def self.ftype(file)
+    File::Stat.new(file).ftype
   end
 
   # Returns a File::Stat object as defined in the win32-file-stat library.

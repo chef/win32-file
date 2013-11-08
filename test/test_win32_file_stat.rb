@@ -139,6 +139,18 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     assert_false(File.file?('NUL'))
   end
 
+  test "ftype method basic functionality" do
+    assert_respond_to(File, :ftype)
+    assert_nothing_raised{ File.ftype(Dir.pwd) }
+    assert_kind_of(String, File.ftype(Dir.pwd))
+  end
+
+  test "ftype returns the expected string" do
+    assert_equal('file', File.ftype(@@file))
+    assert_equal('directory', File.ftype(Dir.pwd))
+    assert_equal('characterSpecial', File.ftype('NUL'))
+  end
+
 =begin
    def test_stat_instance
       File.open(@@file){ |f|
