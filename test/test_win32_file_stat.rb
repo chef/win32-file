@@ -179,7 +179,11 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
   end
 
   test "owned? returns expected results" do
-    assert_true(File.owned?(@@txt_file))
+    if @@elevated
+      assert_false(File.owned?(@@txt_file))
+    else
+      assert_true(File.owned?(@@txt_file))
+    end
     assert_false(File.owned?('NUL'))
     assert_false(File.owned?('bogus'))
   end
@@ -202,6 +206,39 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     assert_alias_method(File, :socket?, :pipe?)
   end
 
+  test "symlink basic functionality" do
+    omit_unless(@@elevated)
+    assert_respond_to(File, :symlink)
+    assert_nothing_raised{ File.symlink(@@txt_file, @@sym_file) }
+  end
+
+  test "symlink file is identical to linked file" do
+    omit_unless(@@elevated)
+    File.symlink(@@txt_file, @@sym_file)
+    assert_true(File.symlink?(@@sym_file))
+    assert_true(File.identical?(@@sym_file, @@txt_file))
+  end
+
+  test "symlink requires two string arguments" do
+    assert_raise(TypeError){ File.symlink(@@txt_file, 1) }
+    assert_raise(TypeError){ File.symlink(1, @@txt_file) }
+    assert_raise(ArgumentError){ File.symlink(@@txt_file, @@sym_file, @@sym_file) }
+  end
+
+  test "symlink? method basic functionality" do
+    assert_respond_to(File, :symlink?)
+    assert_nothing_raised{ File.symlink?(Dir.pwd) }
+    assert_boolean(File.symlink?(Dir.pwd))
+  end
+
+  test "symlink? returns expected results" do
+    assert_false(File.symlink?(@@sym_file))
+    assert_false(File.symlink?(@@txt_file))
+    assert_false(File.symlink?(Dir.pwd))
+    assert_false(File.symlink?('NUL'))
+    assert_false(File.symlink?('bogus'))
+  end
+
 =begin
    def test_stat_instance
       File.open(@@txt_file){ |f|
@@ -214,9 +251,11 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
 
   def teardown
     @blksize = nil
+    File.delete(@@sym_file) if File.exists?(@@sym_file)
   end
 
   def self.shutdown
+    File.delete(@@sym_file) if File.exists?(@@sym_file)
     File.delete(@@txt_file) if File.exists?(@@txt_file)
     File.delete(@@exe_file) if File.exists?(@@exe_file)
     @@txt_file = nil
