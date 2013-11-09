@@ -7,7 +7,6 @@
 require 'test-unit'
 require 'fileutils'
 require 'win32/file'
-require 'win32/security'
 require 'ffi'
 
 class TC_Win32_File_Stat < Test::Unit::TestCase
@@ -19,7 +18,6 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
   def self.startup
     @@txt_file = File.join(Dir.pwd, 'stat_test.txt')
     @@exe_file = File.join(Dir.pwd, 'stat_test.exe')
-    @@sym_file = File.join(Dir.pwd, 'stat_test_link.txt')
 
     Dir.chdir(File.expand_path(File.dirname(__FILE__)))
     File.open(@@txt_file, 'w'){ |fh| fh.puts "This is a test." }
@@ -27,7 +25,6 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     FileUtils.touch(@@exe_file)
 
     @@block_dev = nil
-    @@elevated = Win32::Security.elevated_security?
 
     # Find a block device
     'A'.upto('Z'){ |volume|
@@ -206,61 +203,23 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     assert_alias_method(File, :socket?, :pipe?)
   end
 
-  test "symlink basic functionality" do
-    omit_unless(@@elevated)
-    assert_respond_to(File, :symlink)
-    assert_nothing_raised{ File.symlink(@@txt_file, @@sym_file) }
+  test "check underlying custom stat attributes" do
+    File.open(@@txt_file){ |f|
+      assert_respond_to(f, :stat)
+      assert_kind_of(File::Stat, f.stat)
+      assert_false(f.stat.hidden?)
+    }
   end
-
-  test "symlink file is identical to linked file" do
-    omit_unless(@@elevated)
-    File.symlink(@@txt_file, @@sym_file)
-    assert_true(File.symlink?(@@sym_file))
-    assert_true(File.identical?(@@sym_file, @@txt_file))
-  end
-
-  test "symlink requires two string arguments" do
-    assert_raise(TypeError){ File.symlink(@@txt_file, 1) }
-    assert_raise(TypeError){ File.symlink(1, @@txt_file) }
-    assert_raise(ArgumentError){ File.symlink(@@txt_file, @@sym_file, @@sym_file) }
-  end
-
-  test "symlink? method basic functionality" do
-    assert_respond_to(File, :symlink?)
-    assert_nothing_raised{ File.symlink?(Dir.pwd) }
-    assert_boolean(File.symlink?(Dir.pwd))
-  end
-
-  test "symlink? returns expected results" do
-    assert_false(File.symlink?(@@sym_file))
-    assert_false(File.symlink?(@@txt_file))
-    assert_false(File.symlink?(Dir.pwd))
-    assert_false(File.symlink?('NUL'))
-    assert_false(File.symlink?('bogus'))
-  end
-
-=begin
-   def test_stat_instance
-      File.open(@@txt_file){ |f|
-         assert_respond_to(f, :stat)
-         assert_kind_of(File::Stat, f.stat)
-         assert_equal(false, f.stat.hidden?)
-      }
-   end
-=end
 
   def teardown
     @blksize = nil
-    File.delete(@@sym_file) if File.exists?(@@sym_file)
   end
 
   def self.shutdown
-    File.delete(@@sym_file) if File.exists?(@@sym_file)
     File.delete(@@txt_file) if File.exists?(@@txt_file)
     File.delete(@@exe_file) if File.exists?(@@exe_file)
     @@txt_file = nil
     @@exe_file = nil
-    @@sym_file = nil
     @@elevated = nil
     @@block_dev = nil
   end
