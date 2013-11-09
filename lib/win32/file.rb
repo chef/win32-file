@@ -209,6 +209,7 @@ class File
   end
 
   def self.symlink?(file)
+    return false unless File.exists?(file)
     bool  = false
     wfile = file.wincode
 
@@ -289,28 +290,33 @@ class File
   # block device is a removable drive, cdrom or ramdisk.
   #
   def self.blockdev?(file)
+    return false unless File.exists?(file)
     File::Stat.new(file).blockdev?
   end
 
   # Returns whether or not the file is a character device.
   #
   def self.chardev?(file)
+    return false unless File.exists?(file)
     File::Stat.new(file).chardev?
   end
 
   # Returns whether or not the file is a directory.
   #
   def self.directory?(file)
+    return false unless File.exists?(file)
     File::Stat.new(file).directory?
   end
 
   # Returns whether or not the file is executable.
   def self.executable?(file)
+    return false unless File.exists?(file)
     File::Stat.new(file).executable?
   end
 
   # Returns whether or not the file is a regular file.
   def self.file?(file)
+    return false unless File.exists?(file)
     File::Stat.new(file).file?
   end
 
@@ -322,14 +328,17 @@ class File
   end
 
   def self.grpowned?(file)
+    return false unless File.exists?(file)
     File::Stat.new(file).grpowned?
   end
 
   def self.owned?(file)
+    return false unless File.exists?(file)
     File::Stat.new(file).owned?
   end
 
   def self.pipe?(file)
+    return false unless File.exists?(file)
     File::Stat.new(file).pipe?
   end
 
