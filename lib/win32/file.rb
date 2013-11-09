@@ -196,6 +196,9 @@ class File
   # returns nil as per MRI.
   #
   def self.symlink(target, link)
+    raise TypeError unless target.is_a?(String)
+    raise TypeError unless link.is_a?(String)
+
     flags = File.directory?(target) ? 1 : 0
 
     wlink = link.wincode
@@ -208,6 +211,8 @@ class File
     0 # Comply with spec
   end
 
+  # Returns whether or not +file+ is a symlink.
+  #
   def self.symlink?(file)
     return false unless File.exists?(file)
     bool  = false
