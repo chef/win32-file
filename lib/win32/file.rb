@@ -359,4 +359,10 @@ class File
     alias executable_real? executable?
     alias socket? pipe?
   end
+
+  ## Instance Methods
+
+  def stat
+    File::Stat.new(self.path)
+  end
 end
