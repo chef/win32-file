@@ -7,6 +7,7 @@
 require 'test-unit'
 require 'fileutils'
 require 'win32/file'
+require 'win32/security'
 require 'ffi'
 
 class TC_Win32_File_Stat < Test::Unit::TestCase
@@ -16,14 +17,17 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
   attach_function :GetDriveTypeA, [:string], :uint
 
   def self.startup
-    Dir.chdir(File.expand_path(File.dirname(__FILE__)))
-    @@file = File.join(Dir.pwd, 'stat_test.txt')
-    File.open(@@file, 'w'){ |fh| fh.puts "This is a test." }
-
+    @@txt_file = File.join(Dir.pwd, 'stat_test.txt')
     @@exe_file = File.join(Dir.pwd, 'stat_test.exe')
+    @@sym_file = File.join(Dir.pwd, 'stat_test_link.txt')
+
+    Dir.chdir(File.expand_path(File.dirname(__FILE__)))
+    File.open(@@txt_file, 'w'){ |fh| fh.puts "This is a test." }
+
     FileUtils.touch(@@exe_file)
 
     @@block_dev = nil
+    @@elevated = Win32::Security.elevated_security?
 
     # Find a block device
     'A'.upto('Z'){ |volume|
@@ -41,34 +45,35 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
 
   test "File::Stat class returned is from win32-file-stat library" do
     assert_respond_to(File, :stat)
-    assert_kind_of(File::Stat, File.stat(@@file))
-    assert_nothing_raised{ File.stat(@@file).hidden? }
+    assert_kind_of(File::Stat, File.stat(@@txt_file))
+    assert_nothing_raised{ File.stat(@@txt_file).hidden? }
   end
 
   test "blksize basic functionality" do
     assert_respond_to(File, :blksize)
-    assert_kind_of(Fixnum, File.blksize(@@file))
+    assert_kind_of(Fixnum, File.blksize(@@txt_file))
   end
 
   test "blksize returns the expected value" do
-    assert_equal(@blksize, File.blksize(@@file))
+    assert_equal(@blksize, File.blksize(@@txt_file))
     assert_equal(@blksize, File.blksize("C:/"))
   end
 
   test "blksize requires a single argument" do
     assert_raises(ArgumentError){ File.blksize }
-    assert_raises(ArgumentError){ File.blksize(@@file, 'foo') }
+    assert_raises(ArgumentError){ File.blksize(@@txt_file, 'foo') }
   end
 
   test "blockdev? basic functionality" do
     assert_respond_to(File, :blockdev?)
     assert_nothing_raised{ File.blockdev?("C:\\") }
-    assert_boolean(File.blockdev?("NUL"))
+    assert_boolean(File.blockdev?('NUL'))
   end
 
   test "blockdev? returns false for non-block devices" do
-    assert_false(File.blockdev?(@@file))
-    assert_false(File.blockdev?("NUL"))
+    assert_false(File.blockdev?(@@txt_file))
+    assert_false(File.blockdev?('NUL'))
+    assert_false(File.blockdev?('bogus'))
   end
 
   test "blockdev? returns true for block devices" do
@@ -79,23 +84,24 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
 
   test "blockdev? requires a single argument" do
     assert_raises(ArgumentError){ File.blockdev? }
-    assert_raises(ArgumentError){ File.blockdev?(@@file, "foo") }
+    assert_raises(ArgumentError){ File.blockdev?(@@txt_file, 'foo') }
   end
 
   test "chardev? basic functionality" do
     assert_respond_to(File, :chardev?)
     assert_nothing_raised{ File.chardev?("NUL") }
-    assert_boolean(File.chardev?(@@file))
+    assert_boolean(File.chardev?(@@txt_file))
   end
 
   test "chardev? method returns the expected result" do
-    assert_true(File.chardev?("NUL"))
-    assert_false(File.chardev?(@@file))
+    assert_true(File.chardev?('NUL'))
+    assert_false(File.chardev?(@@txt_file))
+    assert_false(File.chardev?('bogus'))
   end
 
   test "chardev? requires a single argument" do
     assert_raises(ArgumentError){ File.chardev? }
-    assert_raises(ArgumentError){ File.chardev?(@@file, "foo") }
+    assert_raises(ArgumentError){ File.chardev?(@@txt_file, 'foo') }
   end
 
   test "lstat is an alias for stat" do
@@ -111,8 +117,9 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
 
   test "directory? method returns expected results" do
     assert_true(File.directory?(Dir.pwd))
-    assert_false(File.directory?(@@file))
-    assert_false(File.directory?("NUL"))
+    assert_false(File.directory?(@@txt_file))
+    assert_false(File.directory?('NUL'))
+    assert_false(File.directory?('bogus'))
   end
 
   test "executable? method basic functionality" do
@@ -123,8 +130,9 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
 
   test "executable? method returns expected results" do
     assert_true(File.executable?(@@exe_file))
-    assert_false(File.executable?(@@file))
-    assert_false(File.directory?("NUL"))
+    assert_false(File.executable?(@@txt_file))
+    assert_false(File.directory?('NUL'))
+    assert_false(File.directory?('bogus'))
   end
 
   test "file? method basic functionality" do
@@ -134,9 +142,10 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
   end
 
   test "file? method returns expected results" do
-    assert_true(File.file?(@@file))
+    assert_true(File.file?(@@txt_file))
     assert_true(File.file?(Dir.pwd))
     assert_false(File.file?('NUL'))
+    assert_false(File.file?('bogus'))
   end
 
   test "ftype method basic functionality" do
@@ -146,7 +155,7 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
   end
 
   test "ftype returns the expected string" do
-    assert_equal('file', File.ftype(@@file))
+    assert_equal('file', File.ftype(@@txt_file))
     assert_equal('directory', File.ftype(Dir.pwd))
     assert_equal('characterSpecial', File.ftype('NUL'))
   end
@@ -158,8 +167,9 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
   end
 
   test "grpowned? returns expected results" do
-    assert_true(File.grpowned?(@@file))
+    assert_true(File.grpowned?(@@txt_file))
     assert_false(File.grpowned?('NUL'))
+    assert_false(File.grpowned?('bogus'))
   end
 
   test "owned? method basic functionality" do
@@ -169,8 +179,9 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
   end
 
   test "owned? returns expected results" do
-    assert_true(File.owned?(@@file))
+    assert_true(File.owned?(@@txt_file))
     assert_false(File.owned?('NUL'))
+    assert_false(File.owned?('bogus'))
   end
 
   test "pipe? method basic functionality" do
@@ -180,9 +191,10 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
   end
 
   test "pipe? returns expected results" do
-    assert_false(File.pipe?(@@file))
+    assert_false(File.pipe?(@@txt_file))
     assert_false(File.pipe?(Dir.pwd))
     assert_false(File.pipe?('NUL'))
+    assert_false(File.pipe?('bogus'))
   end
 
   test "socket? is an alias for pipe?" do
@@ -192,7 +204,7 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
 
 =begin
    def test_stat_instance
-      File.open(@@file){ |f|
+      File.open(@@txt_file){ |f|
          assert_respond_to(f, :stat)
          assert_kind_of(File::Stat, f.stat)
          assert_equal(false, f.stat.hidden?)
@@ -205,10 +217,12 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
   end
 
   def self.shutdown
-    File.delete(@@file) if File.exists?(@@file)
+    File.delete(@@txt_file) if File.exists?(@@txt_file)
     File.delete(@@exe_file) if File.exists?(@@exe_file)
-    @@file = nil
+    @@txt_file = nil
     @@exe_file = nil
+    @@sym_file = nil
+    @@elevated = nil
     @@block_dev = nil
   end
 end
