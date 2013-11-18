@@ -20,6 +20,7 @@ class File
     remove_method :split, :stat
     remove_method :symlink
     remove_method :symlink?
+    remove_method :world_readable?, :world_writable?
     remove_method :writable?, :writable_real?
   end
 
@@ -359,6 +360,16 @@ class File
   #
   def self.stat(file)
     File::Stat.new(file)
+  end
+
+  def self.world_readable?(file)
+    return false unless File.exists?(file)
+    File::Stat.new(file).world_readable?
+  end
+
+  def self.world_writable?(file)
+    return false unless File.exists?(file)
+    File::Stat.new(file).world_writable?
   end
 
   def self.writable?(file)

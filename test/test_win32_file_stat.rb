@@ -226,6 +226,15 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     assert_alias_method(File, :socket?, :pipe?)
   end
 
+  test "world_readable? basic functionality" do
+    assert_respond_to(File, :world_readable?)
+    assert_boolean(File.world_readable?(@@txt_file))
+  end
+
+  test "world_writable? returns expected value" do
+    assert_false(File.world_writable?(@@txt_file))
+  end
+
   test "writable? basic functionality" do
     assert_respond_to(File, :writable?)
     assert_boolean(File.writable?(@@txt_file))
