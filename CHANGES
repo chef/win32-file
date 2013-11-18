@@ -1,6 +1,8 @@
 == 0.7.0 - ???
 * Removed the atribute methods (hidden?, normal?, etc). These are now in
   the win32-file-attributes gem instead.
+* The encryption and security related methods were removed. These are now in
+  the win32-security and win32-file-security gems instead.
 * Added implementations of readable?, readable_real?, writable?,
   writable_real?, world_readable? and world_writable?, courtesy of the
   win32-file-stat library.
