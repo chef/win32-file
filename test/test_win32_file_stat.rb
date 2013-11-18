@@ -7,6 +7,7 @@
 require 'test-unit'
 require 'fileutils'
 require 'win32/file'
+require 'win32/security'
 require 'ffi'
 
 class TC_Win32_File_Stat < Test::Unit::TestCase
@@ -18,6 +19,7 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
   def self.startup
     @@txt_file = File.join(Dir.pwd, 'stat_test.txt')
     @@exe_file = File.join(Dir.pwd, 'stat_test.exe')
+    @@sys_file = "C:/pagefile.sys"
 
     Dir.chdir(File.expand_path(File.dirname(__FILE__)))
     File.open(@@txt_file, 'w'){ |fh| fh.puts "This is a test." }
@@ -25,6 +27,7 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     FileUtils.touch(@@exe_file)
 
     @@block_dev = nil
+    @@elevated = Win32::Security.elevated_security?
 
     # Find a block device
     'A'.upto('Z'){ |volume|
@@ -196,6 +199,26 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     assert_false(File.pipe?(Dir.pwd))
     assert_false(File.pipe?('NUL'))
     assert_false(File.pipe?('bogus'))
+  end
+
+  test "readable? basic functionality" do
+    assert_respond_to(File, :readable?)
+    assert_boolean(File.readable?(@@txt_file))
+  end
+
+  test "readable? returns expected value" do
+    assert_true(File.readable?(@@txt_file))
+    assert_true(File::Stat.new(Dir.pwd).readable?)
+    assert_false(File::Stat.new(@@sys_file).readable?)
+  end
+
+  test "readable_real? basic functionality" do
+    assert_respond_to(File, :readable_real?)
+    assert_boolean(File.readable_real?(@@txt_file))
+  end
+
+  test "readable_real? returns expected value" do
+    assert_true(File.readable_real?(@@txt_file))
   end
 
   test "socket? is an alias for pipe?" do

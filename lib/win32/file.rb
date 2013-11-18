@@ -16,7 +16,7 @@ class File
     remove_method :basename, :blockdev?, :chardev?, :dirname, :directory?
     remove_method :executable?, :executable_real?, :file?, :ftype, :grpowned?
     remove_method :join, :lstat, :owned?, :pipe?, :socket?
-    remove_method :readlink
+    remove_method :readable?, :readable_real?, :readlink
     remove_method :split, :stat
     remove_method :symlink
     remove_method :symlink?
@@ -246,9 +246,6 @@ class File
 
   # Returns the path of the of the symbolic link referred to by +file+.
   #
-  # Requires Windows Vista or later. On older versions of Windows it
-  # will raise a NotImplementedError, as per MRI.
-  #
   def self.readlink(file)
     wfile = file.wincode
     path  = 0.chr * 512
@@ -281,7 +278,7 @@ class File
       CloseHandle(handle)
     end
 
-    path.tr(0.chr, '').strip[4..-1]
+    path.wstrip[4..-1] # Remove leading backslashes + question mark
   end
 
   ## STAT METHODS
@@ -345,6 +342,16 @@ class File
   def self.pipe?(file)
     return false unless File.exists?(file)
     File::Stat.new(file).pipe?
+  end
+
+  def self.readable?(file)
+    return false unless File.exists?(file)
+    File::Stat.new(file).readable?
+  end
+
+  def self.readable_real?(file)
+    return false unless File.exists?(file)
+    File::Stat.new(file).readable_real?
   end
 
   # Returns a File::Stat object as defined in the win32-file-stat library.
