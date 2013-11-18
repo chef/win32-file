@@ -226,6 +226,26 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     assert_alias_method(File, :socket?, :pipe?)
   end
 
+  test "writable? basic functionality" do
+    assert_respond_to(File, :writable?)
+    assert_boolean(File.writable?(@@txt_file))
+  end
+
+  test "writable? returns expected value" do
+    assert_true(File.writable?(@@txt_file))
+    assert_true(File::Stat.new(Dir.pwd).writable?)
+    assert_false(File::Stat.new(@@sys_file).writable?)
+  end
+
+  test "writable_real? basic functionality" do
+    assert_respond_to(File, :writable_real?)
+    assert_boolean(File.writable_real?(@@txt_file))
+  end
+
+  test "writable_real? returns expected value" do
+    assert_true(File.writable_real?(@@txt_file))
+  end
+
   test "check underlying custom stat attributes" do
     File.open(@@txt_file){ |f|
       assert_respond_to(f, :stat)

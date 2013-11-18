@@ -20,6 +20,7 @@ class File
     remove_method :split, :stat
     remove_method :symlink
     remove_method :symlink?
+    remove_method :writable?, :writable_real?
   end
 
   ## Path methods
@@ -358,6 +359,16 @@ class File
   #
   def self.stat(file)
     File::Stat.new(file)
+  end
+
+  def self.writable?(file)
+    return false unless File.exists?(file)
+    File::Stat.new(file).writable?
+  end
+
+  def self.writable_real?(file)
+    return false unless File.exists?(file)
+    File::Stat.new(file).writable_real?
   end
 
   # Singleton aliases
