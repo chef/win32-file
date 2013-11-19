@@ -12,11 +12,12 @@ class File
 
   class << self
     alias_method :join_orig, :join
+    alias_method :realpath_orig, :realpath
 
     remove_method :basename, :blockdev?, :chardev?, :dirname, :directory?
     remove_method :executable?, :executable_real?, :file?, :ftype, :grpowned?
     remove_method :join, :lstat, :owned?, :pipe?, :socket?
-    remove_method :readable?, :readable_real?, :readlink
+    remove_method :readable?, :readable_real?, :readlink, :realpath
     remove_method :split, :stat
     remove_method :symlink
     remove_method :symlink?
@@ -244,6 +245,14 @@ class File
     end
 
     bool
+  end
+
+  def self.realpath(file)
+    if symlink?(file)
+      readlink(file)
+    else
+      readlink(file)
+    end
   end
 
   # Returns the path of the of the symbolic link referred to by +file+.
