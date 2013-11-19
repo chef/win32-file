@@ -251,13 +251,17 @@ class File
     if symlink?(file)
       readlink(file)
     else
-      readlink(file)
+      readlink_orig(file)
     end
   end
 
   # Returns the path of the of the symbolic link referred to by +file+.
   #
   def self.readlink(file)
+    #if exists?(file) && !symlink(file)
+    #  raise SystemCallError.new(22) # EINVAL, match the spec
+    #end
+
     wfile = file.wincode
     path  = 0.chr * 512
 
