@@ -77,7 +77,7 @@ class TC_Win32_File_Link < Test::Unit::TestCase
   test "readlink returns the expected value when reading a symlink" do
     File.symlink(@file, @link)
     expected = File.expand_path(@file).tr("/", "\\")
-    assert_equal(expected, File.readlink(@file))
+    assert_equal(expected, File.readlink(@link))
   end
 
   test "readlink returns the expected value when reading a regular file" do
