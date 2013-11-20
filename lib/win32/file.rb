@@ -286,14 +286,14 @@ class File
         raise SystemCallError.new('CreateFile', FFI.errno)
       end
 
-      if GetFinalPathNameByHandleW(handle, path, path.size, 0) == 0
+      if GetFinalPathNameByHandleW(handle, path, path.size/2, 0) == 0
         raise SystemCallError.new('GetFinalPathNameByHandle', FFI.errno)
       end
     ensure
       CloseHandle(handle)
     end
 
-    path.wstrip[4..-1] # Remove leading backslashes + question mark
+    path.wstrip[4..-2] # Remove leading backslashes + question mark
   end
 
   ## STAT METHODS
