@@ -80,9 +80,8 @@ class TC_Win32_File_Link < Test::Unit::TestCase
     assert_equal(expected, File.readlink(@link))
   end
 
-  test "readlink returns the expected value when reading a regular file" do
-    expected = File.expand_path(@file).tr("/", "\\")
-    assert_equal(expected, File.readlink(@file))
+  test "readlink raises an error when reading a regular file" do
+    assert_raise(Errno::EINVAL){ File.readlink(@file) }
   end
 
   test "readlink requires one argument only" do
@@ -99,8 +98,8 @@ class TC_Win32_File_Link < Test::Unit::TestCase
   end
 
   test "realpath returns the expected value for a regular file" do
-    assert_equal(Dir.pwd.tr("/", "\\"), File.realpath(Dir.pwd))
-    assert_equal(@@file, File.realpath(@file))
+    assert_equal(Dir.pwd, File.realpath(Dir.pwd))
+    assert_equal(@@file, File.realpath(@file).tr("/", "\\"))
   end
 
   test "realpath returns the expected value for a symlink" do
