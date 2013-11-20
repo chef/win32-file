@@ -293,7 +293,7 @@ class File
       CloseHandle(handle)
     end
 
-    path.wstrip[4..-2] # Remove leading backslashes + question mark
+    path.wstrip[4..-1] # Remove leading backslashes + question mark
   end
 
   ## STAT METHODS
