@@ -171,7 +171,7 @@ class File
     buffer = 0.chr * 1024
     wfile  = file.wincode
 
-    if GetLongPathNameW(wfile, buffer, buffer.size) == 0
+    if GetLongPathNameW(wfile, buffer, buffer.size/2) == 0
       raise SystemCallError.new('GetLongPathName', FFI.errno)
     end
 
@@ -185,7 +185,7 @@ class File
     buffer = 0.chr * 1024
     wfile  = file.wincode
 
-    if GetShortPathNameW(wfile, buffer, buffer.size) == 0
+    if GetShortPathNameW(wfile, buffer, buffer.size/2) == 0
       raise SystemCallError.new('GetShortPathName', FFI.errno)
     end
 
