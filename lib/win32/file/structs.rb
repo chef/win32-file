@@ -15,8 +15,8 @@ module Windows
           :nFileSizeLow, :ulong,
           :dwReserved0, :ulong,
           :dwReserved1, :ulong,
-          :cFileName, [:uint8, 260],
-          :cAlternateFileName, [:uint8, 14]
+          :cFileName, [:uint8, 260*2],
+          :cAlternateFileName, [:uint8, 14*2]
         )
       end
     end
