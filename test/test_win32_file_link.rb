@@ -95,6 +95,22 @@ class TC_Win32_File_Link < Test::Unit::TestCase
     assert_raise(Errno::ENOENT){ File.readlink('bogus.txt') }
   end
 
+  test "realdirpath basic functionality" do
+    assert_respond_to(File, :realdirpath)
+  end
+
+  test "realdirpath returns the expected value for a regular file" do
+    assert_equal(Dir.pwd, File.realdirpath(Dir.pwd))
+    assert_equal(@@file, File.realdirpath(@file).tr("/", "\\"))
+  end
+
+  test "realdirpath returns the expected value for a symlink" do
+    omit_unless(@admin)
+    File.symlink(@file, @link)
+    expected = File.expand_path(@file).tr("/", "\\")
+    assert_equal(expected, File.realdirpath(@link))
+  end
+
   test "realpath basic functionality" do
     assert_respond_to(File, :realpath)
   end

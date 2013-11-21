@@ -13,11 +13,13 @@ class File
   class << self
     alias_method :join_orig, :join
     alias_method :realpath_orig, :realpath
+    alias_method :realdirpath_orig, :realdirpath
 
     remove_method :basename, :blockdev?, :chardev?, :dirname, :directory?
     remove_method :executable?, :executable_real?, :file?, :ftype, :grpowned?
     remove_method :join, :lstat, :owned?, :pipe?, :socket?
     remove_method :readable?, :readable_real?, :readlink, :realpath
+    remove_method :realdirpath
     remove_method :split, :stat
     remove_method :symlink
     remove_method :symlink?
@@ -245,6 +247,27 @@ class File
     end
 
     bool
+  end
+
+  # Converts path to a full file path, with all symlinks resolved and relative
+  # paths made absolute. If a second parameter if present, it is used as the
+  # base for resolving leading relative path segments.
+  #
+  # Unlike File.realpath, an error is not raised if the final path created
+  # using a relative path argument doesn't exist.
+  #--
+  # On Windows we only modify the realpath method if the file is a symlink.
+  #
+  def self.realdirpath(file, relative_to = nil)
+    if symlink?(file)
+      if relative_to
+        File.join(relative_to, File.basename(readlink(file)))
+      else
+        readlink(file)
+      end
+    else
+      realdirpath_orig(file, relative_to)
+    end
   end
 
   # Converts path to a full file path, with all symlinks resolved and relative
