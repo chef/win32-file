@@ -247,11 +247,26 @@ class File
     bool
   end
 
-  def self.realpath(file)
+  # Converts path to a full file path, with all symlinks resolved and relative
+  # paths made absolute. If a second parameter if present, it is used as the
+  # base for resolving leading relative path segments.
+  #--
+  # On Windows we only modify the realpath method if the file is a symlink.
+  #
+  def self.realpath(file, relative_to = nil)
     if symlink?(file)
-      readlink(file)
+      if relative_to
+        result = File.join(relative_to, File.basename(readlink(file)))
+        if File.exists?(result)
+          result
+        else
+          raise SystemCallError.new(result, 2) # Errno::ENOENT
+        end
+      else
+        readlink(file)
+      end
     else
-      realpath_orig(file)
+      realpath_orig(file, relative_to)
     end
   end
 
