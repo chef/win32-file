@@ -38,6 +38,6 @@ class String
   # Read a wide character string up until the first double null, and delete
   # any remaining null characters.
   def wstrip
-    self.force_encoding('UTF-16LE')[Regexp.new("^.*?(?=\x00)".encode('UTF-16LE'))].encode(Encoding.default_external)
+    self.force_encoding('UTF-16LE').strip.encode(Encoding.default_external)
   end
 end
