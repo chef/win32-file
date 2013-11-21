@@ -64,7 +64,7 @@ class File
       if suffix == '.*'
         PathRemoveExtensionW(wfile)
       else
-        ext = PathFindExtensionW(wfile).read_string(suffix.length * 2).delete(0.chr)
+        ext = PathFindExtensionW(wfile).read_string(suffix.length * 2).wstrip
 
         if ext == suffix
           PathRemoveExtensionW(wfile)
@@ -175,7 +175,7 @@ class File
       raise SystemCallError.new('GetLongPathName', FFI.errno)
     end
 
-    buffer.tr(0.chr, '').strip
+    buffer.wstrip
   end
 
   # Returns +path+ in 8.3 format. For example, 'c:\documentation.doc'
@@ -189,7 +189,7 @@ class File
       raise SystemCallError.new('GetShortPathName', FFI.errno)
     end
 
-    buffer.tr(0.chr, '').strip
+    buffer.wstrip
   end
 
   # Creates a symbolic link called +new_name+ for the file or directory
