@@ -25,9 +25,9 @@ module Windows
 
       attach_function :PathFindExtensionW, [:buffer_in], :pointer
       attach_function :PathIsRootW, [:buffer_in], :bool
-      attach_function :PathStripPathW, [:buffer_in], :void
+      attach_function :PathStripPathW, [:pointer], :void
       attach_function :PathRemoveBackslashW, [:buffer_in], :string
-      attach_function :PathRemoveFileSpecW, [:buffer_in], :bool
+      attach_function :PathRemoveFileSpecW, [:pointer], :bool
       attach_function :PathRemoveExtensionW, [:buffer_in], :void
       attach_function :PathStripToRootW, [:buffer_in], :bool
     end

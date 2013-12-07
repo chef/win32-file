@@ -60,20 +60,23 @@ class File
       return file.tr(File::SEPARATOR, File::ALT_SEPARATOR)
     end
 
-    PathStripPathW(wfile) # Gives us the basename
+    ptr = FFI::MemoryPointer.from_string(wfile)
+
+    PathStripPathW(ptr) # Gives us the basename
 
     if suffix
       if suffix == '.*'
-        PathRemoveExtensionW(wfile)
+        PathRemoveExtensionW(ptr)
       else
-        ext = PathFindExtensionW(wfile).read_string(suffix.length * 2).wstrip
+        ext = PathFindExtensionW(ptr).read_string(suffix.length * 2).wstrip
 
         if ext == suffix
-          PathRemoveExtensionW(wfile)
+          PathRemoveExtensionW(ptr)
         end
       end
     end
 
+    wfile = ptr.read_bytes(wfile.size * 2).split("\000\000").first.tr(0.chr, '')
     file = wfile.encode(encoding)[/^[^\0]*/]
     file.sub!(/\\+\z/, '') # Trim trailing slashes
 
@@ -111,16 +114,22 @@ class File
       return file.tr(File::SEPARATOR, File::ALT_SEPARATOR)
     end
 
+    ptr = FFI::MemoryPointer.from_string(wfile)
+
     # Remove trailing slashes if present
-    while result = PathRemoveBackslashW(wfile)
+    while result = PathRemoveBackslashW(ptr)
       break unless result.empty?
     end
 
     # Remove trailing file name if present
-    PathRemoveFileSpecW(wfile)
+    unless PathRemoveFileSpecW(ptr)
+      raise SystemCallError.new("PathRemoveFileSpec", FFI.errno)
+    end
+
+    wfile = ptr.read_bytes(wfile.size * 2).split("\000\000").first.tr(0.chr, '')
 
     # Return to original encoding
-    file = wfile.encode(encoding)[/^[^\0]*/]
+    file = wfile.encode(encoding)
 
     # Empty paths, short relative paths
     if file.nil? || (file && file.empty?)
@@ -445,4 +454,10 @@ class File
   def stat
     File::Stat.new(self.path)
   end
+end
+
+if $0 == __FILE__
+  p File.dirname("C:/Users/djberge/test.txt////")
+  p File.basename("C:/Users/djberge/test.txt")
+  p File.basename("C:/Users/djberge/test.txt", ".txt")
 end
