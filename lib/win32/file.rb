@@ -126,15 +126,15 @@ class File
       raise SystemCallError.new("PathRemoveFileSpec", FFI.errno)
     end
 
-    wfile = ptr.read_bytes(wfile.size * 2).split("\000\000").first.tr(0.chr, '')
-
-    # Return to original encoding
-    file = wfile.encode(encoding)
+    wfile = ptr.read_bytes(wfile.size * 2).split("\000\000").first
 
     # Empty paths, short relative paths
-    if file.nil? || (file && file.empty?)
+    if wfile.nil? or wfile.empty?
       return '.'
     end
+
+    # Return to original encoding
+    file = wfile.tr(0.chr, '').encode(encoding)
 
     file
   end
