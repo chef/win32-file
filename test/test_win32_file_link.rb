@@ -83,7 +83,7 @@ class TC_Win32_File_Link < Test::Unit::TestCase
   end
 
   test "readlink raises an error when reading a regular file" do
-    assert_raise(Errno::EINVAL){ File.readlink(@file) }
+    assert_raise(Errno::EINVAL, Errno::ENOENT){ File.readlink(@file) }
   end
 
   test "readlink requires one argument only" do
