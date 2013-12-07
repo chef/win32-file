@@ -56,7 +56,7 @@ class TC_Win32_File_Link < Test::Unit::TestCase
 
   test "symlink? basic functionality" do
     assert_respond_to(File, :symlink?)
-    assert_boolean(File.symlink?(@file))
+    assert_boolean(File.symlink?(@@file))
   end
 
   test "symlink? returns expected result" do
@@ -68,7 +68,7 @@ class TC_Win32_File_Link < Test::Unit::TestCase
 
   test "symlink? requires one argument only" do
     assert_raise(ArgumentError){ File.symlink? }
-    assert_raise(ArgumentError){ File.symlink?(@file, @file) }
+    assert_raise(ArgumentError){ File.symlink?(@@file, @@file) }
   end
 
   test "readlink basic functionality" do
@@ -83,7 +83,7 @@ class TC_Win32_File_Link < Test::Unit::TestCase
   end
 
   test "readlink raises an error when reading a regular file" do
-    assert_raise(Errno::EINVAL, Errno::ENOENT){ File.readlink(@file) }
+    assert_raise(Errno::EINVAL){ File.readlink(@@file) }
   end
 
   test "readlink requires one argument only" do
@@ -101,7 +101,7 @@ class TC_Win32_File_Link < Test::Unit::TestCase
 
   test "realdirpath returns the expected value for a regular file" do
     assert_equal(Dir.pwd, File.realdirpath(Dir.pwd))
-    assert_equal(@@file, File.realdirpath(@file).tr("/", "\\"))
+    assert_equal(@@file, File.realdirpath(@@file).tr("/", "\\"))
   end
 
   test "realdirpath returns the expected value for a symlink" do
@@ -117,7 +117,7 @@ class TC_Win32_File_Link < Test::Unit::TestCase
 
   test "realpath returns the expected value for a regular file" do
     assert_equal(Dir.pwd, File.realpath(Dir.pwd))
-    assert_equal(@@file, File.realpath(@file).tr("/", "\\"))
+    assert_equal(@@file, File.realpath(@@file).tr("/", "\\"))
   end
 
   test "realpath returns the expected value for a symlink" do
