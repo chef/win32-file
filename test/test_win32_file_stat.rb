@@ -26,6 +26,7 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
 
     FileUtils.touch(@@exe_file)
 
+    @@java = RUBY_PLATFORM == 'java'
     @@block_dev = nil
     @@elevated = Win32::Security.elevated_security?
 
@@ -93,10 +94,14 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     assert_boolean(File.chardev?(@@txt_file))
   end
 
-  test "chardev? method returns the expected result" do
-    assert_true(File.chardev?('NUL'))
+  test "chardev? method returns the expected result for regular files" do
     assert_false(File.chardev?(@@txt_file))
     assert_false(File.chardev?('bogus'))
+  end
+
+  test "chardev? method returns the expected result for character devices" do
+    omit_if(@@java)
+    assert_true(File.chardev?('NUL'))
   end
 
   test "chardev? requires a single argument" do
@@ -274,5 +279,6 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     @@exe_file = nil
     @@elevated = nil
     @@block_dev = nil
+    @@java = nil
   end
 end
