@@ -27,26 +27,26 @@ class TC_Win32_File_Link < Test::Unit::TestCase
 
   test "symlink to a file works as expected" do
     omit_unless(@admin)
-    assert_nothing_raised{ File.symlink(@file, @link) }
+    assert_nothing_raised{ File.symlink(@@file, @link) }
     assert_true(File.exists?(@link))
     assert_true(File.symlink?(@link))
   end
 
   test "symlink method returns zero" do
     omit_unless(@admin)
-    assert_equal(0, File.symlink(@file, @link))
+    assert_equal(0, File.symlink(@@file, @link))
   end
 
   test "symlink requires two arguments" do
     assert_raise(ArgumentError){ File.symlink }
     assert_raise(ArgumentError){ File.symlink(@link) }
-    assert_raise(ArgumentError){ File.symlink(@file, @link, @link) }
+    assert_raise(ArgumentError){ File.symlink(@@file, @link, @link) }
   end
 
   test "symlink fails if link already exists" do
     omit_unless(@admin)
-    File.symlink(@file, @link)
-    assert_raise(SystemCallError){ File.symlink(@file, @link) }
+    File.symlink(@@file, @link)
+    assert_raise(SystemCallError){ File.symlink(@@file, @link) }
   end
 
   test "symlink does not fail if target does not exist" do
@@ -61,7 +61,7 @@ class TC_Win32_File_Link < Test::Unit::TestCase
 
   test "symlink? returns expected result" do
     omit_unless(@admin)
-    File.symlink(@file, @link)
+    File.symlink(@@file, @link)
     assert_true(File.symlink?(@link))
     assert_false(File.symlink?(@file))
   end
@@ -106,7 +106,7 @@ class TC_Win32_File_Link < Test::Unit::TestCase
 
   test "realdirpath returns the expected value for a symlink" do
     omit_unless(@admin)
-    File.symlink(@file, @link)
+    File.symlink(@@file, @link)
     expected = File.expand_path(@file).tr("/", "\\")
     assert_equal(expected, File.realdirpath(@link))
   end
@@ -122,7 +122,7 @@ class TC_Win32_File_Link < Test::Unit::TestCase
 
   test "realpath returns the expected value for a symlink" do
     omit_unless(@admin)
-    File.symlink(@file, @link)
+    File.symlink(@@file, @link)
     expected = File.expand_path(@file).tr("/", "\\")
     assert_equal(expected, File.realpath(@link))
   end
