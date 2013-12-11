@@ -1,3 +1,7 @@
+== 0.6.9 - 11-Dec-2013
+* Added back some missing require statements.
+* Updated the dependency versions and added Rake as a development dependency.
+
 == 0.6.8 - 6-Apr-2012
 * Fixed some unused variable warnings for 1.9.3.
 * Minor cleanup of the Rakefile.
