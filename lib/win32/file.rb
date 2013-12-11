@@ -8,6 +8,7 @@ class File
   include Windows::File::Structs
   extend Windows::File::Functions
 
+  # The version of the win32-file library
   WIN32_FILE_VERSION = '0.7.0'
 
   class << self
@@ -346,6 +347,7 @@ class File
   ## STAT METHODS
 
   # Returns the filesystem's block size.
+  #
   def self.blksize(file)
     File::Stat.new(file).blksize
   end
@@ -373,12 +375,14 @@ class File
   end
 
   # Returns whether or not the file is executable.
+  #
   def self.executable?(file)
     return false unless File.exists?(file)
     File::Stat.new(file).executable?
   end
 
   # Returns whether or not the file is a regular file.
+  #
   def self.file?(file)
     return false unless File.exists?(file)
     File::Stat.new(file).file?
@@ -391,26 +395,36 @@ class File
     File::Stat.new(file).ftype
   end
 
+  # Returns true if the process owner's ID is the same as one of the file's groups.
+  #
   def self.grpowned?(file)
     return false unless File.exists?(file)
     File::Stat.new(file).grpowned?
   end
 
+  # Returns whether or not the current process owner is the owner of the file.
+  #
   def self.owned?(file)
     return false unless File.exists?(file)
     File::Stat.new(file).owned?
   end
 
+  # Returns whether or not the file is a pipe.
+  #
   def self.pipe?(file)
     return false unless File.exists?(file)
     File::Stat.new(file).pipe?
   end
 
+  # Returns whether or not the file is readable by the process owner.
+  #
   def self.readable?(file)
     return false unless File.exists?(file)
     File::Stat.new(file).readable?
   end
 
+  # Synonym for File.readable?
+  #
   def self.readable_real?(file)
     return false unless File.exists?(file)
     File::Stat.new(file).readable_real?
@@ -422,21 +436,31 @@ class File
     File::Stat.new(file)
   end
 
+  # Returns whether or not the file is readable by others. Note that this
+  # merely returns true or false, not permission bits (or nil).
+  #
   def self.world_readable?(file)
     return false unless File.exists?(file)
     File::Stat.new(file).world_readable?
   end
 
+  # Returns whether or not the file is writable by others. Note that this
+  # merely returns true or false, not permission bits (or nil).
+  #
   def self.world_writable?(file)
     return false unless File.exists?(file)
     File::Stat.new(file).world_writable?
   end
 
+  # Returns whether or not the file is writable by the current process owner.
+  #
   def self.writable?(file)
     return false unless File.exists?(file)
     File::Stat.new(file).writable?
   end
 
+  # Synonym for File.writable?
+  #
   def self.writable_real?(file)
     return false unless File.exists?(file)
     File::Stat.new(file).writable_real?
@@ -451,6 +475,8 @@ class File
 
   ## Instance Methods
 
+  # Same as MRI, except it returns a stat object using the win32-file-stat gem.
+  #
   def stat
     File::Stat.new(self.path)
   end
