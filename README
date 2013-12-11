@@ -81,11 +81,22 @@
 
   http://www.rubyforge.org/projects/win32utils.
 
+== Version Issues
+  As of 0.7.0, this gem has been significantly altered. Many of the
+  methods included here have been split out into separate gems, and
+  other methods have been overridden. In addition, as of 0.7.0, this
+  gem uses FFI instead of win32-api. The 0.6.x series is to be
+  considered deprecated.
+
+  If you ware using win32-file 0.7.0 or later, you will be using
+  a different version of win32-file-stat as well. Don't worry, the
+  gemspec has been updated to use the correct gems.
+
 == License
   Artistic 2.0
 
 == Copyright
-  (C) 2003-2012, Daniel J. Berger, All Rights Reserved
+  (C) 2003-2013, Daniel J. Berger, All Rights Reserved
 
 == Warranty
   This package is provided "as is" and without any express or
