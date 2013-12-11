@@ -1,5 +1,12 @@
+require 'windows/error'
+require 'windows/file'
+require 'windows/path'
+require 'windows/device_io'
+require 'windows/handle'
 require 'windows/security'
 require 'windows/limits'
+require 'windows/volume'
+require 'windows/msvcrt/buffer'
 require 'win32/file/stat'
 
 class File
@@ -19,7 +26,7 @@ class File
   extend Windows::Handle
 
   # The version of the win32-file library
-  WIN32_FILE_VERSION = '0.6.8'
+  WIN32_FILE_VERSION = '0.6.9'
 
   # Abbreviated attribute constants for convenience
 
