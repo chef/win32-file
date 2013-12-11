@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   spec.extra_rdoc_files  = ['README', 'CHANGES', 'MANIFEST']
 
   spec.add_dependency('win32-api', '>= 1.5.0')
-  spec.add_dependency('win32-file-stat', '>= 1.3.6')
+  spec.add_dependency('win32-file-stat', '>= 1.3.6', '< 1.4.0')
   spec.add_dependency('windows-pr', '>= 1.2.0')
 
   spec.add_development_dependency('rake')
