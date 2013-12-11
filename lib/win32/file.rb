@@ -1,12 +1,5 @@
-require 'windows/error'
-require 'windows/file'
-require 'windows/path'
-require 'windows/device_io'
-require 'windows/handle'
 require 'windows/security'
 require 'windows/limits'
-require 'windows/volume'
-require 'windows/msvcrt/buffer'
 require 'win32/file/stat'
 
 class File
