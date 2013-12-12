@@ -128,7 +128,7 @@ class TC_Win32_File_Link < Test::Unit::TestCase
   end
 
   def teardown
-    File.delete(@link) if File.exists?(@link)
+    File.delete(@link) rescue nil # Necessary for dangling links
     @link  = nil
     @admin = nil
     @file  = nil

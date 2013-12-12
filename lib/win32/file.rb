@@ -9,7 +9,7 @@ class File
   extend Windows::File::Functions
 
   # The version of the win32-file library
-  WIN32_FILE_VERSION = '0.7.0'
+  VERSION = '0.7.0'
 
   class << self
     alias_method :join_orig, :join
