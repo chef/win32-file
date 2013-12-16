@@ -13,6 +13,7 @@ Gem::Specification.new do |spec|
 
   spec.rubyforge_project = 'win32utils'
   spec.extra_rdoc_files  = ['README', 'CHANGES', 'MANIFEST']
+  spec.required_ruby_version = ">= 1.9.0"
 
   spec.add_dependency('ffi')
   spec.add_dependency('win32-file-stat', '>= 1.4.0')
