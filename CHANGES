@@ -1,4 +1,5 @@
-== 0.7.0 - ???
+== 0.7.0 - 16-Dec-2013
+* Now requires Ruby 1.9 or later.
 * Converted to use FFI instead of win32-api. Now works with JRuby, too.
 * Removed the atribute methods (hidden?, normal?, etc). These are now in
   the win32-file-attributes gem instead.
