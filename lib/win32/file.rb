@@ -36,7 +36,8 @@ class File
   #
   # This was reimplemented because the current version does not handle UNC
   # paths properly, i.e. it should not return anything less than the root.
-  # In most other respects it is identical to the current implementation.
+  # In most other respects it is identical to the current implementation,
+  # except that it does not strip the drive letter on a root path.
   #
   # Unlike MRI, this version will convert all forward slashes to
   # backslashes automatically.
@@ -480,10 +481,4 @@ class File
   def stat
     File::Stat.new(self.path)
   end
-end
-
-if $0 == __FILE__
-  p File.dirname("C:/Users/djberge/test.txt////")
-  p File.basename("C:/Users/djberge/test.txt")
-  p File.basename("C:/Users/djberge/test.txt", ".txt")
 end
