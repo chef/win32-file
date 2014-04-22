@@ -22,7 +22,7 @@
   * File.short_path
 
 == Singleton Methods Redefined
-  * File.basename         # UNC path issues in MRI
+  * File.basename         # UNC path issues, root path differences.
   * File.blksize          # Not implemented in MRI
   * File.blockdev?        # Not implemented in MRI
   * File.chardev?         # Not implemented in MRI
@@ -55,15 +55,11 @@
 
   https://github.com/djberg96/win32-file/issues
 
-  Or the Win32Utils project page at:
-
-  http://www.rubyforge.org/projects/win32utils.
-
 == License
   Artistic 2.0
 
 == Copyright
-  (C) 2003-2013, Daniel J. Berger, All Rights Reserved
+  (C) 2003-2014, Daniel J. Berger, All Rights Reserved
 
 == Warranty
   This package is provided "as is" and without any express or
