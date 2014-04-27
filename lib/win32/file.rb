@@ -49,8 +49,9 @@ class File
   #    File.basename("\\\\foo\\bar")             -> "\\\\foo\\bar"
   #
   def self.basename(file, suffix = nil)
-    raise TypeError unless file.is_a?(String)
-    raise TypeError unless suffix.is_a?(String) if suffix
+    # Force to_str
+    file = "#{file}"
+    suffix = "#{suffix}" if suffix
 
     return file if file.empty? # Return an empty path as-is.
 
