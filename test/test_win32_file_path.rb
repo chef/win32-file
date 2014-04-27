@@ -6,6 +6,7 @@
 #############################################################################
 require 'test-unit'
 require 'win32/file'
+require 'pathname'
 
 class TC_Win32_File_Path < Test::Unit::TestCase
   def self.startup
@@ -95,6 +96,11 @@ class TC_Win32_File_Path < Test::Unit::TestCase
     assert_equal("foo.txt", File.basename("C:\\foo.txt\\\\"))
     assert_equal("foo.txt", File.basename("C:\\foo.txt\\\\\\"))
     assert_equal("foo.txt", File.basename("foo.txt\\\\\\"))
+  end
+
+  test "basename method handles arguments that honor to_str" do
+    assert_equal("foo.txt", File.basename(Pathname.new("C:/blah/blah/foo.txt")))
+    assert_equal("foo", File.basename(Pathname.new("C:/blah/blah/foo.txt"), Pathname.new(".*")))
   end
 
   test "dirname basic functionality" do
