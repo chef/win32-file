@@ -1,6 +1,6 @@
-require File.join(File.dirname(__FILE__), 'file', 'constants')
-require File.join(File.dirname(__FILE__), 'file', 'structs')
-require File.join(File.dirname(__FILE__), 'file', 'functions')
+require_relative 'file/constants'
+require_relative 'file/structs'
+require_relative 'file/functions'
 require 'win32/file/stat'
 
 class File
