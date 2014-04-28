@@ -9,7 +9,7 @@ class File
   extend Windows::File::Functions
 
   # The version of the win32-file library
-  WIN32_FILE_VERSION = '0.7.0'
+  WIN32_FILE_VERSION = '0.7.1'
 
   class << self
     alias_method :join_orig, :join
@@ -161,6 +161,7 @@ class File
   # the current version does not handle UNC paths properly.
   #
   def self.split(file)
+    file = string_check(file)
     array = []
 
     if file.empty? || PathIsRootW(file.wincode)
@@ -182,7 +183,7 @@ class File
   #
   def self.long_path(file)
     buffer = 0.chr * 1024
-    wfile  = file.wincode
+    wfile  = string_check(file).wincode
 
     if GetLongPathNameW(wfile, buffer, buffer.size/2) == 0
       raise SystemCallError.new('GetLongPathName', FFI.errno)
@@ -196,7 +197,7 @@ class File
   #
   def self.short_path(file)
     buffer = 0.chr * 1024
-    wfile  = file.wincode
+    wfile  = string_check(file).wincode
 
     if GetShortPathNameW(wfile, buffer, buffer.size/2) == 0
       raise SystemCallError.new('GetShortPathName', FFI.errno)
