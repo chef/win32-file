@@ -1,3 +1,9 @@
+== 0.7.1 - 28-Apr-2014
+* Modified all custom singleton methods to accept arguments that define either
+  to_str or to_path to be in line with MRI's behavior.
+* Some internal changes for the long_path and short_path methods.
+* Added some path tests.
+
 == 0.7.0 - 16-Dec-2013
 * Now requires Ruby 1.9 or later.
 * Converted to use FFI instead of win32-api. Now works with JRuby, too.
