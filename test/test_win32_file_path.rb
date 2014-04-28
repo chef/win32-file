@@ -98,7 +98,7 @@ class TC_Win32_File_Path < Test::Unit::TestCase
     assert_equal("foo.txt", File.basename("foo.txt\\\\\\"))
   end
 
-  test "basename method handles arguments that honor to_str" do
+  test "basename method handles arguments that honor to_str or to_path" do
     assert_equal("foo.txt", File.basename(Pathname.new("C:/blah/blah/foo.txt")))
     assert_equal("foo", File.basename(Pathname.new("C:/blah/blah/foo.txt"), Pathname.new(".*")))
   end
@@ -164,9 +164,13 @@ class TC_Win32_File_Path < Test::Unit::TestCase
     assert_equal("\\\\foo\\bar", File.dirname("\\\\foo\\bar\\baz\\"))
   end
 
-  test "argument to dirname must be a string" do
+  test "argument to dirname must be a stringy object" do
     assert_raises(TypeError){ File.dirname(nil) }
     assert_raises(TypeError){ File.dirname(['foo', 'bar']) }
+  end
+
+  test "dirname method handles arguments that honor to_str or to_path" do
+    assert_equal("C:\\blah\\blah", File.dirname(Pathname.new("C:/blah/blah/foo.txt")))
   end
 
   test "split method basic functionality" do
