@@ -213,6 +213,15 @@ class TC_Win32_File_Path < Test::Unit::TestCase
     assert_equal("C:\\foo\\bar", path)
   end
 
+  test "split method accepts stringy arguments" do
+    assert_equal(["C:\\foo", "bar"], File.split(Pathname.new("C:/foo/bar")))
+  end
+
+  test "split requires a stringy argument or a TypeError is raised" do
+    assert_raise(TypeError){ File.split(nil) }
+    assert_raise(TypeError){ File.split([]) }
+  end
+
   test "File.long_path basic functionality" do
     assert_respond_to(File, :long_path)
     assert_nothing_raised{ File.long_path(@short_file) }
