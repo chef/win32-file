@@ -182,28 +182,32 @@ class File
   # name in 8.3 format.
   #
   def self.long_path(file)
-    buffer = 0.chr * 1024
+    buffer = FFI::Buffer.new(:wint_t, 1024, true)
     wfile  = string_check(file).wincode
 
-    if GetLongPathNameW(wfile, buffer, buffer.size/2) == 0
+    length = GetLongPathNameW(wfile, buffer, buffer.size)
+
+    if length == 0 || length > buffer.size / 2
       raise SystemCallError.new('GetLongPathName', FFI.errno)
     end
 
-    buffer.wstrip
+    buffer.read_bytes(length * 2).wstrip
   end
 
   # Returns +path+ in 8.3 format. For example, 'c:\documentation.doc'
   # would be returned as 'c:\docume~1.doc'.
   #
   def self.short_path(file)
-    buffer = 0.chr * 1024
+    buffer = FFI::Buffer.new(:wint_t, 1024, true)
     wfile  = string_check(file).wincode
 
-    if GetShortPathNameW(wfile, buffer, buffer.size/2) == 0
+    length = GetShortPathNameW(wfile, buffer, buffer.size)
+
+    if length == 0 || length > buffer.size / 2
       raise SystemCallError.new('GetShortPathName', FFI.errno)
     end
 
-    buffer.wstrip
+    buffer.read_bytes(length * 2).wstrip
   end
 
   # Creates a symbolic link called +new_name+ for the file or directory
