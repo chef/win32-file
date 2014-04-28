@@ -49,9 +49,8 @@ class File
   #    File.basename("\\\\foo\\bar")             -> "\\\\foo\\bar"
   #
   def self.basename(file, suffix = nil)
-    # Force to_str
-    file = "#{file}"
-    suffix = "#{suffix}" if suffix
+    file = string_check(file)
+    suffix = string_check(suffix) if suffix
 
     return file if file.empty? # Return an empty path as-is.
 
@@ -101,7 +100,7 @@ class File
   #    File.dirname("\\\\foo\\bar")          -> "\\\\foo\\bar"
   #
   def self.dirname(file)
-    raise TypeError unless file.is_a?(String)
+    file = string_check(file)
 
     # Short circuit for empty paths
     return '.' if file.empty?
@@ -481,5 +480,18 @@ class File
   #
   def stat
     File::Stat.new(self.path)
+  end
+
+  # Private singleton methods
+  class << self
+    private
+
+    # Simulate Ruby's string checking
+    def string_check(arg)
+      return arg if arg.is_a?(String)
+      return arg.send(:to_str) if arg.respond_to?(:to_str, true) # MRI allows private to_str
+      return arg.to_path if arg.respond_to?(:to_path)
+      raise TypeError
+    end
   end
 end
