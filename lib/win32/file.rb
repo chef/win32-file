@@ -217,8 +217,8 @@ class File
   # returns nil as per MRI.
   #
   def self.symlink(target, link)
-    raise TypeError unless target.is_a?(String)
-    raise TypeError unless link.is_a?(String)
+    target = string_check(target)
+    link = string_check(link)
 
     flags = File.directory?(target) ? 1 : 0
 
@@ -236,8 +236,9 @@ class File
   #
   def self.symlink?(file)
     return false unless File.exists?(file)
+
     bool  = false
-    wfile = file.wincode
+    wfile = string_check(file).wincode
 
     attrib = GetFileAttributesW(wfile)
 
@@ -275,6 +276,8 @@ class File
   # On Windows we only modify the realpath method if the file is a symlink.
   #
   def self.realdirpath(file, relative_to = nil)
+    file = string_check(file)
+
     if symlink?(file)
       if relative_to
         File.join(relative_to, File.basename(readlink(file)))
@@ -293,6 +296,9 @@ class File
   # On Windows we only modify the realpath method if the file is a symlink.
   #
   def self.realpath(file, relative_to = nil)
+    file = string_check(file)
+    relative_to = string_check(relative_to) if relative_to
+
     if symlink?(file)
       if relative_to
         result = File.join(relative_to, File.basename(readlink(file)))
@@ -312,6 +318,8 @@ class File
   # Returns the path of the of the symbolic link referred to by +file+.
   #
   def self.readlink(file)
+    file = string_check(file)
+
     if exists?(file) && !symlink?(file)
       raise SystemCallError.new(22) # EINVAL, match the spec
     end
