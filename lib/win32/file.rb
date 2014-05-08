@@ -235,7 +235,7 @@ class File
   # Returns whether or not +file+ is a symlink.
   #
   def self.symlink?(file)
-    return false unless File.exists?(file)
+    return false unless File.exist?(file)
 
     bool  = false
     wfile = string_check(file).wincode
@@ -302,7 +302,7 @@ class File
     if symlink?(file)
       if relative_to
         result = File.join(relative_to, File.basename(readlink(file)))
-        if File.exists?(result)
+        if File.exist?(result)
           result
         else
           raise SystemCallError.new(result, 2) # Errno::ENOENT
@@ -320,7 +320,7 @@ class File
   def self.readlink(file)
     file = string_check(file)
 
-    if exists?(file) && !symlink?(file)
+    if exist?(file) && !symlink?(file)
       raise SystemCallError.new(22) # EINVAL, match the spec
     end
 
@@ -370,35 +370,35 @@ class File
   # block device is a removable drive, cdrom or ramdisk.
   #
   def self.blockdev?(file)
-    return false unless File.exists?(file)
+    return false unless File.exist?(file)
     File::Stat.new(file).blockdev?
   end
 
   # Returns whether or not the file is a character device.
   #
   def self.chardev?(file)
-    return false unless File.exists?(file)
+    return false unless File.exist?(file)
     File::Stat.new(file).chardev?
   end
 
   # Returns whether or not the file is a directory.
   #
   def self.directory?(file)
-    return false unless File.exists?(file)
+    return false unless File.exist?(file)
     File::Stat.new(file).directory?
   end
 
   # Returns whether or not the file is executable.
   #
   def self.executable?(file)
-    return false unless File.exists?(file)
+    return false unless File.exist?(file)
     File::Stat.new(file).executable?
   end
 
   # Returns whether or not the file is a regular file.
   #
   def self.file?(file)
-    return false unless File.exists?(file)
+    return false unless File.exist?(file)
     File::Stat.new(file).file?
   end
 
@@ -412,35 +412,35 @@ class File
   # Returns true if the process owner's ID is the same as one of the file's groups.
   #
   def self.grpowned?(file)
-    return false unless File.exists?(file)
+    return false unless File.exist?(file)
     File::Stat.new(file).grpowned?
   end
 
   # Returns whether or not the current process owner is the owner of the file.
   #
   def self.owned?(file)
-    return false unless File.exists?(file)
+    return false unless File.exist?(file)
     File::Stat.new(file).owned?
   end
 
   # Returns whether or not the file is a pipe.
   #
   def self.pipe?(file)
-    return false unless File.exists?(file)
+    return false unless File.exist?(file)
     File::Stat.new(file).pipe?
   end
 
   # Returns whether or not the file is readable by the process owner.
   #
   def self.readable?(file)
-    return false unless File.exists?(file)
+    return false unless File.exist?(file)
     File::Stat.new(file).readable?
   end
 
   # Synonym for File.readable?
   #
   def self.readable_real?(file)
-    return false unless File.exists?(file)
+    return false unless File.exist?(file)
     File::Stat.new(file).readable_real?
   end
 
@@ -454,7 +454,7 @@ class File
   # merely returns true or false, not permission bits (or nil).
   #
   def self.world_readable?(file)
-    return false unless File.exists?(file)
+    return false unless File.exist?(file)
     File::Stat.new(file).world_readable?
   end
 
@@ -462,21 +462,21 @@ class File
   # merely returns true or false, not permission bits (or nil).
   #
   def self.world_writable?(file)
-    return false unless File.exists?(file)
+    return false unless File.exist?(file)
     File::Stat.new(file).world_writable?
   end
 
   # Returns whether or not the file is writable by the current process owner.
   #
   def self.writable?(file)
-    return false unless File.exists?(file)
+    return false unless File.exist?(file)
     File::Stat.new(file).writable?
   end
 
   # Synonym for File.writable?
   #
   def self.writable_real?(file)
-    return false unless File.exists?(file)
+    return false unless File.exist?(file)
     File::Stat.new(file).writable_real?
   end
 
