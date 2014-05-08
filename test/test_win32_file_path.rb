@@ -276,7 +276,7 @@ class TC_Win32_File_Path < Test::Unit::TestCase
   end
 
   def self.shutdown
-    File.delete(@@file) if File.exists?(@@file)
+    File.delete(@@file) if File.exist?(@@file)
     @@file = nil
   end
 end

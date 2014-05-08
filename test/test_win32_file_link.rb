@@ -28,7 +28,7 @@ class TC_Win32_File_Link < Test::Unit::TestCase
   test "symlink to a file works as expected" do
     omit_unless(@admin)
     assert_nothing_raised{ File.symlink(@@file, @link) }
-    assert_true(File.exists?(@link))
+    assert_true(File.exist?(@link))
     assert_true(File.symlink?(@link))
   end
 
@@ -135,7 +135,7 @@ class TC_Win32_File_Link < Test::Unit::TestCase
   end
 
   def self.shutdown
-    File.delete(@@file) if File.exists?(@@file)
+    File.delete(@@file) if File.exist?(@@file)
     @@file = nil
   end
 end

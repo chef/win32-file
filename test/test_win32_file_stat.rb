@@ -79,7 +79,7 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
 
   test "blockdev? returns true for block devices" do
     omit_unless(@@block_dev)
-    omit_unless(File.exists?(@@block_dev), "No media in device - skipping")
+    omit_unless(File.exist?(@@block_dev), "No media in device - skipping")
     assert_true(File.blockdev?(@@block_dev))
   end
 
@@ -273,8 +273,8 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
   end
 
   def self.shutdown
-    File.delete(@@txt_file) if File.exists?(@@txt_file)
-    File.delete(@@exe_file) if File.exists?(@@exe_file)
+    File.delete(@@txt_file) if File.exist?(@@txt_file)
+    File.delete(@@exe_file) if File.exist?(@@exe_file)
     @@txt_file = nil
     @@exe_file = nil
     @@elevated = nil
