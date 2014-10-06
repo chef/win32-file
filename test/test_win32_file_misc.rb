@@ -6,7 +6,7 @@ require 'test-unit'
 
 class TC_Win32_File_Misc < Test::Unit::TestCase
   test "version constant is set to expected value" do
-    assert_equal('0.7.1', File::WIN32_FILE_VERSION)
+    assert_equal('0.7.2', File::WIN32_FILE_VERSION)
   end
 
   test "ffi functions are private" do
