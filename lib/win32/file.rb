@@ -82,6 +82,8 @@ class File
     file = wfile.encode(encoding)[/^[^\0]*/]
     file.sub!(/\\+\z/, '') # Trim trailing slashes
 
+    ptr.free
+
     file
   end
 
@@ -137,6 +139,8 @@ class File
 
     # Return to original encoding
     file = wfile.tr(0.chr, '').encode(encoding)
+
+    ptr.free
 
     file
   end
@@ -317,6 +321,8 @@ class File
 
   # Returns the path of the of the symbolic link referred to by +file+.
   #
+  # Unlike unixy platforms, this will raise an error if the link is stale.
+  #
   def self.readlink(file)
     file = string_check(file)
 
@@ -325,7 +331,7 @@ class File
     end
 
     wfile = file.wincode
-    path  = 0.chr * 512
+    path  = 0.chr * 1024
 
     if File.directory?(file)
       flags = FILE_FLAG_BACKUP_SEMANTICS
