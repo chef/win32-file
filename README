@@ -3,7 +3,6 @@
   methods have been redefined to make them work properly on MS Windows.
 
 == Prerequisites
-  * windows-pr
   * win32-file-stat
 
 == Installation
@@ -49,9 +48,9 @@
   * File.world_writable?  # Not implemented in MRI
 
 == Known issues or bugs
-  None that I'm aware of.
+  The File.exist? method will return true on stale symlinks.
 
-  Please report any issues you find on the github page at:
+  Please report any other issues you find on the github page at:
 
   https://github.com/djberg96/win32-file/issues
 
