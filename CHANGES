@@ -1,6 +1,8 @@
-== 0.7.2 - ???
-* Replaced File.exists? with File.exist? to avoid deprecation warnings in
-  Ruby 2.x.
+== 0.7.2 - 7-Oct-2014
+* Replaced File.exists? with File.exist? to avoid deprecation warnings
+  for Ruby 2.x.
+* Some minor memory improvements by explicitly freeing some pointers.
+* Minor README updates.
 
 == 0.7.1 - 28-Apr-2014
 * Modified all custom singleton methods to accept arguments that define either
