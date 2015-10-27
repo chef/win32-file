@@ -148,7 +148,7 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
 
   test "file? method returns expected results" do
     assert_true(File.file?(@@txt_file))
-    assert_true(File.file?(Dir.pwd))
+    assert_false(File.file?(Dir.pwd))
     assert_false(File.file?('NUL'))
     assert_false(File.file?('bogus'))
   end
