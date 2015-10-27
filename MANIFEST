@@ -3,6 +3,8 @@
 * Rakefile
 * README
 * win32-file.gemspec
+* certs/djberg96_pub.pem
+* lib/win32-file.rb
 * lib/win32/file.rb
 * lib/win32/file/constants.rb
 * lib/win32/file/functions.rb
