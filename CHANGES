@@ -1,3 +1,8 @@
+== 0.7.3 - 26-Oct-2015
+* This gem is now signed.
+* Fixed a test for File.file?
+* Added a win32-file.rb file for convenience.
+
 == 0.7.2 - 7-Oct-2014
 * Replaced File.exists? with File.exist? to avoid deprecation warnings
   for Ruby 2.x.
