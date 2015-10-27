@@ -7,13 +7,10 @@ CLEAN.include("**/*.txt", "**/*.gem", "**/*.rbc")
 namespace 'gem' do
   desc 'Create the win32-file gem'
   task :create => [:clean] do
+    require 'rubygems/package'
     spec = eval(IO.read('win32-file.gemspec'))
-    if Gem::VERSION < "2.0"
-      Gem::Builder.new(spec).build  
-    else
-      require 'rubygems/package'
-      Gem::Package.build(spec)
-    end  
+    spec.signing_key = File.join(Dir.home, '.ssh', 'gem-private_key.pem')
+    Gem::Package.build(spec)
   end
 
   desc 'Install the win32-file gem'
