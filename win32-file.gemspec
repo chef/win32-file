@@ -2,7 +2,7 @@ require 'rubygems'
 
 Gem::Specification.new do |spec|
   spec.name       = 'win32-file'
-  spec.version    = '0.7.2'
+  spec.version    = '0.7.3'
   spec.authors    = ['Daniel J. Berger', 'Park Heesob']
   spec.license    = 'Artistic 2.0'
   spec.email      = 'djberg96@gmail.com'
@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.summary    = 'Extra or redefined methods for the File class on Windows.'
   spec.test_files = Dir['test/test*']
   spec.files      = Dir['**/*'].reject{ |f| f.include?('git') }
+  spec.cert_chain = ['certs/djberg96_pub.pem']
 
-  spec.rubyforge_project = 'win32utils'
   spec.extra_rdoc_files  = ['README', 'CHANGES', 'MANIFEST']
   spec.required_ruby_version = ">= 1.9.0"
 
