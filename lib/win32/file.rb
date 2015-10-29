@@ -9,16 +9,16 @@ class File
   extend Windows::File::Functions
 
   # The version of the win32-file library
-  WIN32_FILE_VERSION = '0.7.3'
+  WIN32_FILE_VERSION = '0.8.0'
 
   class << self
     alias_method :join_orig, :join
     alias_method :realpath_orig, :realpath
     alias_method :realdirpath_orig, :realdirpath
 
-    remove_method :basename, :blockdev?, :chardev?, :dirname, :directory?
-    remove_method :executable?, :executable_real?, :file?, :ftype, :grpowned?
-    remove_method :join, :lstat, :owned?, :pipe?, :socket?
+    remove_method :atime, :basename, :blockdev?, :chardev?, :ctime, :dirname
+    remove_method :directory?, :executable?, :executable_real?, :file?
+    remove_method :ftype, :grpowned?, :join, :lstat, :owned?, :pipe?, :socket?
     remove_method :readable?, :readable_real?, :readlink, :realpath
     remove_method :realdirpath
     remove_method :split, :stat
@@ -366,6 +366,15 @@ class File
 
   ## STAT METHODS
 
+  # Returns the file's last access time. If a +time+ argument is provided, it
+  # sets the file's access time. The +time+ argument may be a Time object or
+  # a numeric value.
+  #
+  def self.atime(file, time = nil)
+    set_filetime(file, nil, time) if time
+    File::Stat.new(file).atime
+  end
+
   # Returns the filesystem's block size.
   #
   def self.blksize(file)
@@ -385,6 +394,15 @@ class File
   def self.chardev?(file)
     return false unless File.exist?(file)
     File::Stat.new(file).chardev?
+  end
+
+  # Returns the file's creation time. If a +time+ argument is provided, it
+  # sets the file's creation time. The +time+ argument may be a Time object or
+  # a numeric value.
+  #
+  def self.ctime(file, time = nil)
+    set_filetime(file, time) if time
+    File::Stat.new(file).atime
   end
 
   # Returns whether or not the file is a directory.
@@ -420,6 +438,15 @@ class File
   def self.grpowned?(file)
     return false unless File.exist?(file)
     File::Stat.new(file).grpowned?
+  end
+
+  # Returns the file's creation time. If a +time+ argument is provided, it
+  # sets the file's creation time. The +time+ argument may be a Time object or
+  # a numeric value.
+  #
+  def self.mtime(file, time = nil)
+    set_filetime(file, nil, nil, time) if time
+    File::Stat.new(file).atime
   end
 
   # Returns whether or not the current process owner is the owner of the file.
@@ -502,15 +529,56 @@ class File
   end
 
   # Private singleton methods
-  class << self
-    private
+  private
 
-    # Simulate Ruby's string checking
-    def string_check(arg)
-      return arg if arg.is_a?(String)
-      return arg.send(:to_str) if arg.respond_to?(:to_str, true) # MRI allows private to_str
-      return arg.to_path if arg.respond_to?(:to_path)
-      raise TypeError
+  # Simulate Ruby's string checking
+  def self.string_check(arg)
+    return arg if arg.is_a?(String)
+    return arg.send(:to_str) if arg.respond_to?(:to_str, true) # MRI allows private to_str
+    return arg.to_path if arg.respond_to?(:to_path)
+    raise TypeError
+  end
+
+  # Internal method for setting the file time.
+  def self.set_filetime(path, ctime = nil, atime = nil, mtime = nil)
+    begin
+      handle = CreateFileW(
+        path.wincode,
+        FILE_WRITE_ATTRIBUTES,
+        FILE_SHARE_READ | FILE_SHARE_WRITE,
+        nil,
+        OPEN_EXISTING,
+        FILE_ATTRIBUTE_NORMAL,
+        0
+      )
+
+      if handle == INVALID_HANDLE_VALUE
+        raise SystemCallError.new('CreateFile', FFI.errno)
+      end
+
+      ftimes = [] # 0 = ctime, 1 = atime, 2 = mtime
+
+      [ctime, atime, mtime].each{ |time|
+        if time.nil?
+          ftimes << nil
+          next
+        else
+          systime = SYSTEMTIME.new(time)
+          ftime = FILETIME.new
+
+          if SystemTimeToFileTime(systime, ftime)
+            ftimes << ftime
+          else
+            raise SystemCallError.new('SystemTimetoFileTime', FFI.errno)
+          end
+        end
+      }
+
+      unless SetFileTime(handle, ftimes[0], ftimes[1], ftimes[2])
+        raise SystemCallError.new('SetFileTime', FFI.errno)
+      end
+    ensure
+      CloseHandle(handle) if handle
     end
   end
 end
