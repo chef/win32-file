@@ -25,6 +25,8 @@ module Windows
       attach_pfunc :GetShortPathNameW, [:buffer_in, :buffer_out, :dword], :dword
       attach_pfunc :GetLongPathNameW, [:buffer_in, :buffer_out, :dword], :dword
       attach_pfunc :QueryDosDeviceA, [:string, :buffer_out, :dword], :dword
+      attach_pfunc :SetFileTime, [:handle, :ptr, :ptr, :ptr], :bool
+      attach_pfunc :SystemTimeToFileTime, [:ptr, :ptr], :bool
 
       ffi_lib :shlwapi
 
