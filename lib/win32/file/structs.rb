@@ -5,6 +5,35 @@ module Windows
         layout(:dwLowDateTime, :ulong, :dwHighDateTime, :ulong)
       end
 
+      class SYSTEMTIME < FFI::Struct
+        layout(
+          :wYear, :ushort,
+          :wMonth, :ushort,
+          :wDayOfWeek, :ushort,
+          :wDay, :ushort,
+          :wHour, :ushort,
+          :wMinute, :ushort,
+          :wSecond, :ushort,
+          :wMilliseconds, :ushort
+        )
+
+        # Allow a time object or raw numeric in constructor
+        def initialize(time = nil)
+          super()
+
+          time = Time.at(time) if time.is_a?(Numeric)
+
+          self[:wYear] = time.year
+          self[:wMonth] = time.month
+          self[:wDayOfWeek] = time.wday
+          self[:wDay] = time.day
+          self[:wHour] = time.hour
+          self[:wMinute] = time.min
+          self[:wSecond] = time.sec
+          self[:wMilliseconds] = time.nsec / 1000000
+        end
+      end
+
       class WIN32_FIND_DATA < FFI::Struct
         layout(
           :dwFileAttributes, :ulong,
