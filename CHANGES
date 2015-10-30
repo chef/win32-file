@@ -1,6 +1,7 @@
-== 0.8.0 - ???
+== 0.8.0 - 30-Oct-2015
 * The File.atime, File.ctime and File.mtime methods now accept an optional
-  second argument. If present, those values are altered.
+  second argument. If present, those values are set to whatever value that
+  you provided.
 
 == 0.7.3 - 26-Oct-2015
 * This gem is now signed.
