@@ -21,10 +21,12 @@
   * File.short_path
 
 == Singleton Methods Redefined
+  * File.atime            # Takes an optional 2nd argument to set the value.
   * File.basename         # UNC path issues, root path differences.
   * File.blksize          # Not implemented in MRI
   * File.blockdev?        # Not implemented in MRI
   * File.chardev?         # Not implemented in MRI
+  * File.ctime            # Takes an optional 2nd argument to set the value.
   * File.directory?       # Better wide character string handling than MRI
   * File.dirname          # UNC path issues in MRI
   * File.executable?      # Not implemented in MRI
@@ -33,6 +35,7 @@
   * File.join             # For uniform handling of path separators.
   * File.grpowned?        # Not implemented in MRI
   * File.lstat            # Not implemented in MRI
+  * File.mtime            # Takes an optional 2nd argument to set the value.
   * File.owned?           # Not implemented in MRI
   * File.pipe?            # Not implemented in MRI
   * File.readable?        # Not implemented in MRI
