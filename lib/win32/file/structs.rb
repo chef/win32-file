@@ -22,6 +22,7 @@ module Windows
           super()
 
           time = Time.at(time) if time.is_a?(Numeric)
+          time = time.utc unless time.utc?
 
           self[:wYear] = time.year
           self[:wMonth] = time.month
