@@ -42,12 +42,27 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
 
   def setup
     @blksize = 4096 # Most likely
+    @time_file = 'stat_time.txt'
   end
 
   test "File::Stat class returned is from win32-file-stat library" do
     assert_respond_to(File, :stat)
     assert_kind_of(File::Stat, File.stat(@@txt_file))
     assert_nothing_raised{ File.stat(@@txt_file).hidden? }
+  end
+
+  test "atime method basic functionality" do
+    assert_nothing_raised{ File.atime(@@txt_file) }
+    assert_kind_of(Time, File.atime(@@txt_file))
+  end
+
+  test "atime with two arguments sets the creation time" do
+    FileUtils.touch(@time_file)
+    original_time = File.atime(@time_file)
+    updated_time = original_time - 100000
+
+    assert_equal(updated_time, File.atime(@time_file, updated_time))
+    assert_equal(updated_time, File.atime(@time_file))
   end
 
   test "blksize basic functionality" do
@@ -107,6 +122,20 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
   test "chardev? requires a single argument" do
     assert_raises(ArgumentError){ File.chardev? }
     assert_raises(ArgumentError){ File.chardev?(@@txt_file, 'foo') }
+  end
+
+  test "ctime method basic functionality" do
+    assert_nothing_raised{ File.ctime(@@txt_file) }
+    assert_kind_of(Time, File.ctime(@@txt_file))
+  end
+
+  test "ctime with two arguments sets the creation time" do
+    FileUtils.touch(@time_file)
+    original_time = File.ctime(@time_file)
+    updated_time = original_time - 100000
+
+    assert_equal(updated_time, File.ctime(@time_file, updated_time))
+    assert_equal(updated_time, File.ctime(@time_file))
   end
 
   test "lstat is an alias for stat" do
@@ -175,6 +204,20 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
     assert_true(File.grpowned?(@@txt_file))
     assert_false(File.grpowned?('NUL'))
     assert_false(File.grpowned?('bogus'))
+  end
+
+  test "mtime method basic functionality" do
+    assert_nothing_raised{ File.mtime(@@txt_file) }
+    assert_kind_of(Time, File.mtime(@@txt_file))
+  end
+
+  test "mtime with two arguments sets the creation time" do
+    FileUtils.touch(@time_file)
+    original_time = File.mtime(@time_file)
+    updated_time = original_time - 100000
+
+    assert_equal(updated_time, File.mtime(@time_file, updated_time))
+    assert_equal(updated_time, File.mtime(@time_file))
   end
 
   test "owned? method basic functionality" do
@@ -269,7 +312,10 @@ class TC_Win32_File_Stat < Test::Unit::TestCase
   end
 
   def teardown
+    File.delete(@time_file) if File.exist?(@time_file)
+
     @blksize = nil
+    @time_file = nil
   end
 
   def self.shutdown
