@@ -402,7 +402,7 @@ class File
   #
   def self.ctime(file, time = nil)
     set_filetime(file, time) if time
-    File::Stat.new(file).atime
+    File::Stat.new(file).ctime
   end
 
   # Returns whether or not the file is a directory.
@@ -446,7 +446,7 @@ class File
   #
   def self.mtime(file, time = nil)
     set_filetime(file, nil, nil, time) if time
-    File::Stat.new(file).atime
+    File::Stat.new(file).mtime
   end
 
   # Returns whether or not the current process owner is the owner of the file.
