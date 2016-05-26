@@ -1,6 +1,7 @@
 require_relative 'file/constants'
 require_relative 'file/structs'
 require_relative 'file/functions'
+require 'ffi/win32/extensions'
 require 'win32/file/stat'
 
 class File
@@ -9,7 +10,7 @@ class File
   extend Windows::File::Functions
 
   # The version of the win32-file library
-  WIN32_FILE_VERSION = '0.8.0'
+  WIN32_FILE_VERSION = '0.8.1'
 
   class << self
     alias_method :join_orig, :join
