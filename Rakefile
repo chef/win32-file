@@ -10,7 +10,7 @@ namespace 'gem' do
     require 'rubygems/package'
     spec = eval(IO.read('win32-file.gemspec'))
     spec.signing_key = File.join(Dir.home, '.ssh', 'gem-private_key.pem')
-    Gem::Package.build(spec)
+    Gem::Package.build(spec, true)
   end
 
   desc 'Install the win32-file gem'
