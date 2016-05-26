@@ -28,6 +28,10 @@ module Windows
       DRIVE_REMOVABLE = 2
       DRIVE_CDROM     = 5
       DRIVE_RAMDISK   = 6
+
+      SE_PRIVILEGE_ENABLED = 0x00000002
+      TOKEN_ADJUST_PRIVILEGES = 0x0020
+      ERROR_NOT_ALL_ASSIGNED = 0x00000514
     end
   end
 end

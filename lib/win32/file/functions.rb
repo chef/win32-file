@@ -22,8 +22,10 @@ module Windows
       attach_pfunc :GetFileType, [:handle], :dword
       attach_pfunc :GetFileAttributesW, [:buffer_in], :dword
       attach_pfunc :GetFinalPathNameByHandleW, [:handle, :buffer_out, :dword, :dword], :dword
+      attach_pfunc :GetCurrentProcess, [], :handle
       attach_pfunc :GetShortPathNameW, [:buffer_in, :buffer_out, :dword], :dword
       attach_pfunc :GetLongPathNameW, [:buffer_in, :buffer_out, :dword], :dword
+      attach_pfunc :OpenProcessToken, [:uintptr_t, :ulong, :pointer], :bool
       attach_pfunc :QueryDosDeviceA, [:string, :buffer_out, :dword], :dword
       attach_pfunc :SetFileTime, [:handle, :ptr, :ptr, :ptr], :bool
       attach_pfunc :SystemTimeToFileTime, [:ptr, :ptr], :bool
@@ -37,6 +39,11 @@ module Windows
       attach_pfunc :PathRemoveFileSpecW, [:pointer], :bool
       attach_pfunc :PathRemoveExtensionW, [:buffer_in], :void
       attach_pfunc :PathStripToRootW, [:buffer_in], :bool
+
+      ffi_lib :advapi32
+
+      attach_pfunc :AdjustTokenPrivileges, [:handle, :int, :pointer, :dword, :pointer, :pointer], :bool
+      attach_pfunc :LookupPrivilegeValueA, [:pointer, :string, :pointer], :bool
     end
   end
 end
