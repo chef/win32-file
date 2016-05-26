@@ -243,13 +243,14 @@ class File
     end
 
     htoken = token.read_pointer.to_i
-    priv   = TOKEN_PRIVILEGES.new
 
-    priv[:PrivilegeCount] = 1
-    priv[:Privileges][0][:Luid] = luid
-    priv[:Privileges][0][:Attributes] = SE_PRIVILEGE_ENABLED
+    new_state = TOKEN_PRIVILEGES.new
 
-    bool = AdjustTokenPrivileges(htoken, 0, priv, priv.size, nil, nil)
+    new_state[:PrivilegeCount] = 1
+    new_state[:Privileges][0][:Luid] = luid
+    new_state[:Privileges][0][:Attributes] = SE_PRIVILEGE_ENABLED
+
+    bool = AdjustTokenPrivileges(htoken, 0, new_state, 0, nil, nil)
 
     if FFI.errno == ERROR_NOT_ALL_ASSIGNED || !bool
       raise SystemCallError.new('AdjustTokenPrivileges', FFI.errno)
