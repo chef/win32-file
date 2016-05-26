@@ -9,7 +9,7 @@ class File
   extend Windows::File::Functions
 
   # The version of the win32-file library
-  WIN32_FILE_VERSION = '0.8.0'
+  WIN32_FILE_VERSION = '0.8.1'
 
   class << self
     alias_method :join_orig, :join
@@ -127,7 +127,7 @@ class File
 
     # Remove trailing file name if present
     unless PathRemoveFileSpecW(ptr)
-      raise SystemCallError.new("PathRemoveFileSpec", FFI.errno)
+      FFI.raise_windows_error('PathRemoveFileSpec')
     end
 
     wfile = ptr.read_bytes(wfile.size * 2).split("\000\000").first
@@ -192,7 +192,7 @@ class File
     length = GetLongPathNameW(wfile, buffer, buffer.size)
 
     if length == 0 || length > buffer.size / 2
-      raise SystemCallError.new('GetLongPathName', FFI.errno)
+      FFI.raise_windows_error('GetLongPathName')
     end
 
     buffer.read_bytes(length * 2).wstrip
@@ -208,7 +208,7 @@ class File
     length = GetShortPathNameW(wfile, buffer, buffer.size)
 
     if length == 0 || length > buffer.size / 2
-      raise SystemCallError.new('GetShortPathName', FFI.errno)
+      FFI.raise_windows_error('GetShortPathName')
     end
 
     buffer.read_bytes(length * 2).wstrip
@@ -217,8 +217,8 @@ class File
   # Creates a symbolic link called +new_name+ for the file or directory
   # +old_name+.
   #
-  # This method requires Windows Vista or later to work. Otherwise, it
-  # returns nil as per MRI.
+  # Prior to Windows 10, this requires administrative privileges.
+  #--
   #
   def self.symlink(target, link)
     target = string_check(target)
@@ -230,7 +230,7 @@ class File
     wtarget = target.wincode
 
     unless CreateSymbolicLinkW(wlink, wtarget, flags)
-      raise SystemCallError.new('CreateSymbolicLink', FFI.errno)
+      FFI.raise_windows_error('CreateSymbolicLink')
     end
 
     0 # Comply with spec
@@ -247,7 +247,7 @@ class File
     attrib = GetFileAttributesW(wfile)
 
     if attrib == INVALID_FILE_ATTRIBUTES
-      raise SystemCallError.new('GetFileAttributes', FFI.errno)
+      FFI.raise_windows_error('GetFileAttributes')
     end
 
     if attrib & FILE_ATTRIBUTE_REPARSE_POINT > 0
@@ -256,7 +256,7 @@ class File
         handle = FindFirstFileW(wfile, find_data)
 
         if handle == INVALID_HANDLE_VALUE
-          raise SystemCallError.new('FindFirstFile', FFI.errno)
+          FFI.raise_windows_error('FindFirstFile')
         end
 
         if find_data[:dwReserved0] == IO_REPARSE_TAG_SYMLINK
@@ -351,11 +351,11 @@ class File
       )
 
       if handle == INVALID_HANDLE_VALUE
-        raise SystemCallError.new('CreateFile', FFI.errno)
+        FFI.raise_windows_error('CreateFile')
       end
 
       if GetFinalPathNameByHandleW(handle, path, path.size/2, 0) == 0
-        raise SystemCallError.new('GetFinalPathNameByHandle', FFI.errno)
+        FFI.raise_windows_error('GetFinalPathNameByHandle')
       end
     ensure
       CloseHandle(handle)
@@ -553,7 +553,7 @@ class File
       )
 
       if handle == INVALID_HANDLE_VALUE
-        raise SystemCallError.new('CreateFile', FFI.errno)
+        FFI.raise_windows_error('CreateFile')
       end
 
       ftimes = [] # 0 = ctime, 1 = atime, 2 = mtime
@@ -569,13 +569,13 @@ class File
           if SystemTimeToFileTime(systime, ftime)
             ftimes << ftime
           else
-            raise SystemCallError.new('SystemTimetoFileTime', FFI.errno)
+            FFI.raise_windows_error('SystemTimetoFileTime')
           end
         end
       }
 
       unless SetFileTime(handle, ftimes[0], ftimes[1], ftimes[2])
-        raise SystemCallError.new('SetFileTime', FFI.errno)
+        FFI.raise_windows_error('SetFileTime')
       end
     ensure
       CloseHandle(handle) if handle
