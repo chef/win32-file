@@ -127,7 +127,7 @@ class File
 
     # Remove trailing file name if present
     unless PathRemoveFileSpecW(ptr)
-      FFI.raise_windows_error('PathRemoveFileSpec')
+      raise SystemCallError.new('PathRemoveFileSpec', FFI.errno)
     end
 
     wfile = ptr.read_bytes(wfile.size * 2).split("\000\000").first
@@ -192,7 +192,7 @@ class File
     length = GetLongPathNameW(wfile, buffer, buffer.size)
 
     if length == 0 || length > buffer.size / 2
-      FFI.raise_windows_error('GetLongPathName')
+      raise SystemCallError.new('GetLongPathName', FFI.errno)
     end
 
     buffer.read_bytes(length * 2).wstrip
@@ -208,7 +208,7 @@ class File
     length = GetShortPathNameW(wfile, buffer, buffer.size)
 
     if length == 0 || length > buffer.size / 2
-      FFI.raise_windows_error('GetShortPathName')
+      raise SystemCallError.new('GetShortPathName')
     end
 
     buffer.read_bytes(length * 2).wstrip
@@ -229,8 +229,34 @@ class File
     wlink = link.wincode
     wtarget = target.wincode
 
+    luid = LUID.new
+
+    unless LookupPrivilegeValueA(nil, 'SeCreateSymbolicLinkPrivilege', luid)
+      raise SystemCallError.new('LookupPrivilegeValue', FFI.errno)
+    end
+
+    handle = GetCurrentProcess()
+    token  = FFI::MemoryPointer.new(:uintptr_t)
+
+    unless OpenProcessToken(handle, TOKEN_ADJUST_PRIVILEGES, token)
+      raise SystemCallError.new('OpenProcessToken', FFI.errno)
+    end
+
+    htoken = token.read_pointer.to_i
+    priv   = TOKEN_PRIVILEGES.new
+
+    priv[:PrivilegeCount] = 1
+    priv[:Privileges][0][:Luid] = luid
+    priv[:Privileges][0][:Attributes] = SE_PRIVILEGE_ENABLED
+
+    bool = AdjustTokenPrivileges(htoken, 0, priv, priv.size, nil, nil)
+
+    if FFI.errno == ERROR_NOT_ALL_ASSIGNED || !bool
+      raise SystemCallError.new('AdjustTokenPrivileges', FFI.errno)
+    end
+
     unless CreateSymbolicLinkW(wlink, wtarget, flags)
-      FFI.raise_windows_error('CreateSymbolicLink')
+      raise SystemCallError.new('CreateSymbolicLink', FFI.errno)
     end
 
     0 # Comply with spec
@@ -247,7 +273,7 @@ class File
     attrib = GetFileAttributesW(wfile)
 
     if attrib == INVALID_FILE_ATTRIBUTES
-      FFI.raise_windows_error('GetFileAttributes')
+      raise SystemCallError.new('GetFileAttributes', FFI.errno)
     end
 
     if attrib & FILE_ATTRIBUTE_REPARSE_POINT > 0
@@ -256,7 +282,7 @@ class File
         handle = FindFirstFileW(wfile, find_data)
 
         if handle == INVALID_HANDLE_VALUE
-          FFI.raise_windows_error('FindFirstFile')
+          raise SystemCallError.new('FindFirstFile', FFI.errno)
         end
 
         if find_data[:dwReserved0] == IO_REPARSE_TAG_SYMLINK
@@ -351,11 +377,11 @@ class File
       )
 
       if handle == INVALID_HANDLE_VALUE
-        FFI.raise_windows_error('CreateFile')
+        raise SystemCallError.new('CreateFile', FFI.errno)
       end
 
       if GetFinalPathNameByHandleW(handle, path, path.size/2, 0) == 0
-        FFI.raise_windows_error('GetFinalPathNameByHandle')
+        raise SystemCallError.new('GetFinalPathNameByHandle', FFI.errno)
       end
     ensure
       CloseHandle(handle)
@@ -553,7 +579,7 @@ class File
       )
 
       if handle == INVALID_HANDLE_VALUE
-        FFI.raise_windows_error('CreateFile')
+        raise SystemCallError.new('CreateFile', FFI.errno)
       end
 
       ftimes = [] # 0 = ctime, 1 = atime, 2 = mtime
@@ -569,13 +595,13 @@ class File
           if SystemTimeToFileTime(systime, ftime)
             ftimes << ftime
           else
-            FFI.raise_windows_error('SystemTimetoFileTime')
+            raise SystemCallError.new('SystemTimetoFileTime', FFI.errno)
           end
         end
       }
 
       unless SetFileTime(handle, ftimes[0], ftimes[1], ftimes[2])
-        FFI.raise_windows_error('SetFileTime')
+        raise SystemCallError.new('SetFileTime', FFI.errno)
       end
     ensure
       CloseHandle(handle) if handle
