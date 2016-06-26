@@ -2,7 +2,7 @@ require 'rubygems'
 
 Gem::Specification.new do |spec|
   spec.name       = 'win32-file'
-  spec.version    = '0.8.0'
+  spec.version    = '0.8.1'
   spec.authors    = ['Daniel J. Berger', 'Park Heesob']
   spec.license    = 'Artistic 2.0'
   spec.email      = 'djberg96@gmail.com'
@@ -16,6 +16,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 1.9.0"
 
   spec.add_dependency('ffi')
+  spec.add_dependency('ffi-win32-extensions')
   spec.add_dependency('win32-file-stat', '>= 1.4.0')
 
   spec.add_development_dependency('rake')
