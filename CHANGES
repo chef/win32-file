@@ -1,3 +1,8 @@
+== 0.8.1 - 25-Jun-2016
+* Removed the custom wstrip method, use ffi-win32-extensions instead,
+  which was added as a dependency.
+* Added appveyor.yml file.
+
 == 0.8.0 - 30-Oct-2015
 * The File.atime, File.ctime and File.mtime methods now accept an optional
   second argument. If present, those values are set to whatever value that
