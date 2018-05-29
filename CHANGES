@@ -1,3 +1,6 @@
+== 0.8.2 - 29-May-2018
+* Fixes of Pathname.parent for root directory
+
 == 0.8.1 - 25-Jun-2016
 * Removed the custom wstrip method, use ffi-win32-extensions instead,
   which was added as a dependency.
