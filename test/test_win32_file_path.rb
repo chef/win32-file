@@ -33,14 +33,14 @@ class TC_Win32_File_Path < Test::Unit::TestCase
     assert_equal("bar", File.basename("C:\\foo\\bar"))
     assert_equal("bar", File.basename("C:\\foo\\bar\\"))
     assert_equal("foo", File.basename("C:\\foo"))
-    assert_equal("C:\\", File.basename("C:\\"))
+    assert_equal("C:/", File.basename("C:\\"))
   end
 
   test "basename method handles unc paths" do
     assert_equal("baz.txt", File.basename("\\\\foo\\bar\\baz.txt"))
     assert_equal("baz", File.basename("\\\\foo\\bar\\baz"))
-    assert_equal("\\\\foo", File.basename("\\\\foo"))
-    assert_equal("\\\\foo\\bar", File.basename("\\\\foo\\bar"))
+    assert_equal("//foo", File.basename("\\\\foo"))
+    assert_equal("//foo/bar", File.basename("\\\\foo\\bar"))
   end
 
   test "basename method handles forward slashes in standard unix paths" do
@@ -53,15 +53,15 @@ class TC_Win32_File_Path < Test::Unit::TestCase
   end
 
   test "basename method handles forward slashes in unc unix paths" do
-    assert_equal("\\\\foo", File.basename("//foo"))
-    assert_equal("\\\\foo\\bar", File.basename("//foo/bar"))
+    assert_equal("//foo", File.basename("//foo"))
+    assert_equal("//foo/bar", File.basename("//foo/bar"))
   end
 
   test "basename method handles forward slashes in windows paths" do
     assert_equal("bar", File.basename("C:/foo/bar"))
     assert_equal("bar", File.basename("C:/foo/bar/"))
     assert_equal("foo", File.basename("C:/foo"))
-    assert_equal("C:\\", File.basename("C:/"))
+    assert_equal("C:/", File.basename("C:/"))
     assert_equal("bar", File.basename("C:/foo/bar//"))
   end
 
