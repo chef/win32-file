@@ -60,7 +60,7 @@ class File
 
     # Return a root path as-is.
     if PathIsRootW(wfile)
-      return file.tr(File::SEPARATOR, File::ALT_SEPARATOR)
+      return file.tr(File::ALT_SEPARATOR, File::SEPARATOR)
     end
 
     ptr = FFI::MemoryPointer.from_string(wfile)
