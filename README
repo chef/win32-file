@@ -3,7 +3,6 @@
   methods have been redefined to make them work properly on MS Windows.
 
 == Prerequisites
-  * windows-pr
   * win32-file-stat
 
 == Installation
@@ -12,91 +11,57 @@
 == Synopsis
   require 'win32/file'
 
-  p File.hidden?(somefile)
-  p File.attributes(somefile)
+  p File.long_path("C:/Progra~1")       # => C:\Program Files
+  p File.short_path("C:/Program Files") # => C:\Progra~1
 
-  File.open(somefile){ |fh|
-    fh.hidden = true
-  }
+  # See redefined methods below
 
 == Singleton Methods Added
-  * File.attributes
-  * File.archive?
-  * File.compressed?
-  * File.decrypt
-  * File.encrypt
-  * File.encrypted?
-  * File.get_permissions
-  * File.hidden?
-  * File.indexed?
-  * File.longpath
-  * File.normal?
-  * File.offline?
-  * File.readonly?
-  * File.remove_attributes
-  * File.reparse_point?
-  * File.securities
-  * File.set_attributes
-  * File.set_permissions
-  * File.shortpath
-  * File.sparse?
-  * File.system?
-  * File.temporary?
-
-== Instance Methods Added
-  * File#archive=
-  * File#compressed=
-  * File#hidden=
-  * File#indexed=
-  * File#normal=
-  * File#offline=
-  * File#readonly=
-  * File#sparse=
-  * File#system=
-  * File#temporary=
+  * File.long_path
+  * File.short_path
 
 == Singleton Methods Redefined
-  * File.basename   # UNC path issues
-  * File.blksize    # Not implemented in MRI
-  * File.blockdev?  # Not implemented in MRI
-  * File.chardev?   # Not implemented in MRI
-  * File.directory? # Wide character string handling
-  * File.dirname    # UNC path issues
-  * File.lstat      # Not implemented in MRI
-  * File.readlink   # Not implemented in MRI
-  * File.size       # 2GB limitation
-  * File.split      # UNC path issues
-  * File.stat       # Uses object returned by win32-file-stat
-  * File.symlink    # Not implemented in MRI
-  * File.symlink?   # Not implemented in MRI
+  * File.atime            # Takes an optional 2nd argument to set the value.
+  * File.basename         # UNC path issues, root path differences.
+  * File.blksize          # Not implemented in MRI
+  * File.blockdev?        # Not implemented in MRI
+  * File.chardev?         # Not implemented in MRI
+  * File.ctime            # Takes an optional 2nd argument to set the value.
+  * File.directory?       # Better wide character string handling than MRI
+  * File.dirname          # UNC path issues in MRI
+  * File.executable?      # Not implemented in MRI
+  * File.file?            # Handles non-regular files better than MRI
+  * File.ftype            # Handles non-regular files better than MRI
+  * File.join             # For uniform handling of path separators.
+  * File.grpowned?        # Not implemented in MRI
+  * File.lstat            # Not implemented in MRI
+  * File.mtime            # Takes an optional 2nd argument to set the value.
+  * File.owned?           # Not implemented in MRI
+  * File.pipe?            # Not implemented in MRI
+  * File.readable?        # Not implemented in MRI
+  * File.realpath         # MRI doesn't handle symlinks
+  * File.realdirpath      # MRI doesn't handle symlinks
+  * File.socket?          # Not implemented in MRI
+  * File.readlink         # Not implemented in MRI
+  * File.split            # UNC path issues in MRI
+  * File.stat             # Uses object returned by win32-file-stat
+  * File.symlink          # Not implemented in MRI
+  * File.symlink?         # Not implemented in MRI
+  * File.writable?        # Not implemented in MRI
+  * File.world_writable?  # Not implemented in MRI
 
 == Known issues or bugs
-  None that I'm aware of.
+  The File.exist? method will return true on stale symlinks.
 
-  Please report any issues you find on the github page at:
+  Please report any other issues you find on the github page at:
 
   https://github.com/djberg96/win32-file/issues
-
-  Or the Win32Utils project page at:
-
-  http://www.rubyforge.org/projects/win32utils.
-
-== Version Issues
-  As of 0.7.0, this gem has been significantly altered. Many of the
-  methods included here have been split out into separate gems, and
-  other methods have been overridden. In addition, as of 0.7.0, this
-  gem uses FFI instead of win32-api. The 0.6.x series is to be
-  considered deprecated.
-
-  If you ware using win32-file 0.7.0 or later, you will be using
-  a different version of win32-file-stat as well. Don't worry, the
-  gemspec has been updated to use the correct gems.
 
 == License
   Artistic 2.0
 
 == Copyright
-  (C) 2003-2013, Daniel J. Berger, All Rights Reserved
+  (C) 2003-2015, Daniel J. Berger, All Rights Reserved
 
 == Warranty
   This package is provided "as is" and without any express or
