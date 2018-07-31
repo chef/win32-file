@@ -1,3 +1,44 @@
+== 0.8.2 - 29-May-2018
+* Fixes of Pathname.parent for root directory
+
+== 0.8.1 - 25-Jun-2016
+* Removed the custom wstrip method, use ffi-win32-extensions instead,
+  which was added as a dependency.
+* Added appveyor.yml file.
+
+== 0.8.0 - 30-Oct-2015
+* The File.atime, File.ctime and File.mtime methods now accept an optional
+  second argument. If present, those values are set to whatever value that
+  you provided.
+
+== 0.7.3 - 26-Oct-2015
+* This gem is now signed.
+* Fixed a test for File.file?
+* Added a win32-file.rb file for convenience.
+
+== 0.7.2 - 7-Oct-2014
+* Replaced File.exists? with File.exist? to avoid deprecation warnings
+  for Ruby 2.x.
+* Some minor memory improvements by explicitly freeing some pointers.
+* Minor README updates.
+
+== 0.7.1 - 28-Apr-2014
+* Modified all custom singleton methods to accept arguments that define either
+  to_str or to_path to be in line with MRI's behavior.
+* Some internal changes for the long_path and short_path methods.
+* Added some path tests.
+
+== 0.7.0 - 16-Dec-2013
+* Now requires Ruby 1.9 or later.
+* Converted to use FFI instead of win32-api. Now works with JRuby, too.
+* Removed the atribute methods (hidden?, normal?, etc). These are now in
+  the win32-file-attributes gem instead.
+* The encryption and security related methods were removed. These are now in
+  the win32-security and win32-file-security gems instead.
+* Added implementations of readable?, readable_real?, writable?,
+  writable_real?, world_readable? and world_writable?, courtesy of the
+  win32-file-stat library.
+
 == 0.6.9 - 11-Dec-2013
 * Added back some missing require statements.
 * Updated the dependency versions and added Rake as a development dependency.
@@ -102,7 +143,7 @@
 * The File.get_permissions method now takes an optional hostname as the second
   argument.  If it isn't provided, it defaults to localhost.
 * The File.set_attr method was renamed to File.set_attributes (though an alias
-  has been provided for backwards compatibility). 
+  has been provided for backwards compatibility).
 * The File.unset_attr method was renamed to File.remove_attributes.  Again, an
   alias was created for backwards compatibility.
 * The File.content_indexed? method is now just File.indexed?  Likewise, the
