@@ -1,0 +1,82 @@
+# Archived Repository
+
+This repository has been archived and will no longer receive updates. 
+It was archived as part of the [Repository Standardization Initiative](https://github.com/chef-boneyard/oss-repo-standardization-2025).
+
+If you are a Chef customer and need support for this repository, please contact your Chef account team.
+
+
+
+== Description
+  Additional methods for the File class on MS Windows. Plus, several existing
+  methods have been redefined to make them work properly on MS Windows.
+
+== Prerequisites
+  * win32-file-stat
+
+== Installation
+  gem install win32-file
+
+== Synopsis
+  require 'win32/file'
+
+  p File.long_path("C:/Progra~1")       # => C:\Program Files
+  p File.short_path("C:/Program Files") # => C:\Progra~1
+
+  # See redefined methods below
+
+== Singleton Methods Added
+  * File.long_path
+  * File.short_path
+
+== Singleton Methods Redefined
+  * File.atime            # Takes an optional 2nd argument to set the value.
+  * File.basename         # UNC path issues, root path differences.
+  * File.blksize          # Not implemented in MRI
+  * File.blockdev?        # Not implemented in MRI
+  * File.chardev?         # Not implemented in MRI
+  * File.ctime            # Takes an optional 2nd argument to set the value.
+  * File.directory?       # Better wide character string handling than MRI
+  * File.dirname          # UNC path issues in MRI
+  * File.executable?      # Not implemented in MRI
+  * File.file?            # Handles non-regular files better than MRI
+  * File.ftype            # Handles non-regular files better than MRI
+  * File.join             # For uniform handling of path separators.
+  * File.grpowned?        # Not implemented in MRI
+  * File.lstat            # Not implemented in MRI
+  * File.mtime            # Takes an optional 2nd argument to set the value.
+  * File.owned?           # Not implemented in MRI
+  * File.pipe?            # Not implemented in MRI
+  * File.readable?        # Not implemented in MRI
+  * File.realpath         # MRI doesn't handle symlinks
+  * File.realdirpath      # MRI doesn't handle symlinks
+  * File.socket?          # Not implemented in MRI
+  * File.readlink         # Not implemented in MRI
+  * File.split            # UNC path issues in MRI
+  * File.stat             # Uses object returned by win32-file-stat
+  * File.symlink          # Not implemented in MRI
+  * File.symlink?         # Not implemented in MRI
+  * File.writable?        # Not implemented in MRI
+  * File.world_writable?  # Not implemented in MRI
+
+== Known issues or bugs
+  The File.exist? method will return true on stale symlinks.
+
+  Please report any other issues you find on the github page at:
+
+  https://github.com/djberg96/win32-file/issues
+
+== License
+  Artistic 2.0
+
+== Copyright
+  (C) 2003-2015, Daniel J. Berger, All Rights Reserved
+
+== Warranty
+  This package is provided "as is" and without any express or
+  implied warranties, including, without limitation, the implied
+  warranties of merchantability and fitness for a particular purpose.
+
+== Authors
+  * Daniel J. Berger
+  * Park Heesob
