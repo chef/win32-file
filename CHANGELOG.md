@@ -1,16 +1,17 @@
 # win32-file Changelog 
 
-<!-- latest_release 0.8.3 -->
-## [win32-file-0.8.3](https://github.com/chef/win32-file/tree/win32-file-0.8.3) (2026-04-22)
+<!-- latest_release 0.8.4 -->
+## [win32-file-0.8.4](https://github.com/chef/win32-file/tree/win32-file-0.8.4) (2026-04-22)
 
 #### Merged Pull Requests
-- CHEF-28803 - decommission - disable_ci [#13](https://github.com/chef/win32-file/pull/13) ([Saburesh07](https://github.com/Saburesh07))
+- CHEF-28804 - decommission - disable_dependabot [#14](https://github.com/chef/win32-file/pull/14) ([Saburesh07](https://github.com/Saburesh07))
 <!-- latest_release -->
 
 <!-- release_rollup since=0.8.2 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-28804 - decommission - disable_dependabot [#14](https://github.com/chef/win32-file/pull/14) ([Saburesh07](https://github.com/Saburesh07)) <!-- 0.8.4 -->
 - CHEF-28803 - decommission - disable_ci [#13](https://github.com/chef/win32-file/pull/13) ([Saburesh07](https://github.com/Saburesh07)) <!-- 0.8.3 -->
 <!-- release_rollup -->
 
